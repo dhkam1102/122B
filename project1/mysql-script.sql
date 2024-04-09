@@ -1,8 +1,4 @@
-
--- SQL statements to create a database called "moviedb" with the specified tables
-
 CREATE DATABASE IF NOT EXISTS moviedb;
-
 USE moviedb;
 
 -- Table: movies
