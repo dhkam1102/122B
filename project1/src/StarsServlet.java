@@ -49,9 +49,9 @@ public class StarsServlet extends HttpServlet {
             Statement statement = conn.createStatement();
 
             String query = "SELECT m.title, m.year, m.director,\n" +
-                    "       SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT g.name ORDER BY g.name SEPARATOR ', '), ', ', 3) AS genres,\n" +
-                    "       SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT s.name ORDER BY s.name SEPARATOR ', '), ', ', 3) AS stars,\n" +
-                    "       r.rating\n" +
+                    "SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT g.name ORDER BY g.name SEPARATOR ', '), ', ', 3) AS genres,\n" +
+                    "SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT s.name ORDER BY s.name SEPARATOR ', '), ', ', 3) AS stars,\n" +
+                    "r.rating\n" +
                     "FROM movies m\n" +
                     "JOIN ratings r ON m.id = r.movieId\n" +
                     "JOIN genres_in_movies gim ON m.id = gim.movieId\n" +
