@@ -45,8 +45,7 @@ function handleResult(resultData) {
     let starInfoElement = jQuery("#star_info");
 
     // append two html <p> created to the h3 body, which will refresh the page
-    starInfoElement.append("<p>Star Name: " + resultData[0]["star_name"] + "</p>" +
-        "<p>Date Of Birth: " + resultData[0]["star_dob"] + "</p>");
+    starInfoElement.append("<p>Movie Name:  " + resultData[0]["movie_title"] + "</p>");
 
     console.log("handleResult: populating movie table from resultData");
 
@@ -61,6 +60,17 @@ function handleResult(resultData) {
         rowHTML += "<th>" + resultData[i]["movie_title"] + "</th>";
         rowHTML += "<th>" + resultData[i]["movie_year"] + "</th>";
         rowHTML += "<th>" + resultData[i]["movie_director"] + "</th>";
+        rowHTML += "<th>" + resultData[i]["movie_genres"] + "</th>"
+
+        // rowHTML += "<th>" + resultData[i]["movie_stars"] + "</th>";
+        let star_list = resultData[i]["movie_stars"].split(", ");
+        let star_html = "";
+        for (let name of star_list) {
+            star_html += '<a href="single-star.html?star_name=' + name + '&movie_title=' + resultData[i]["movie_title"] + '">' + name + '</a>, ';
+        }
+        rowHTML += "<th>" + star_html + "</th>"
+
+        rowHTML += "<th>" + resultData[i]["movie_rating"] + "</th>";
         rowHTML += "</tr>";
 
         // Append the row created to the table body, which will refresh the page
@@ -79,6 +89,6 @@ let starId = getParameterByName('id');
 jQuery.ajax({
     dataType: "json",  // Setting return data type
     method: "GET",// Setting request method
-    url: "api/single-star?id=" + starId, // Setting request url, which is mapped by StarsServlet in Stars.java
+    url: "api/single-movie?id=" + starId, // Setting request url, which is mapped by StarsServlet in Stars.java
     success: (resultData) => handleResult(resultData) // Setting callback function to handle data returned successfully by the SingleStarServlet
 });
