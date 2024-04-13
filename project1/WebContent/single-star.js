@@ -45,7 +45,8 @@ function handleResult(resultData) {
     let starInfoElement = jQuery("#star_info");
 
     // append two html <p> created to the h3 body, which will refresh the page
-    starInfoElement.append("<p>Movie Name:  " + resultData[0]["movie_title"] + "</p>");
+    starInfoElement.append("<p>Star Name: " + resultData[0]["star_name"] + "</p>" +
+        "<p>Date Of Birth: " + resultData[0]["birthYear"] + "</p>");
 
     console.log("handleResult: populating movie table from resultData");
 
@@ -57,20 +58,17 @@ function handleResult(resultData) {
     for (let i = 0; i < Math.min(10, resultData.length); i++) {
         let rowHTML = "";
         rowHTML += "<tr>";
-        rowHTML += "<th>" + resultData[i]["movie_title"] + "</th>";
-        rowHTML += "<th>" + resultData[i]["movie_year"] + "</th>";
-        rowHTML += "<th>" + resultData[i]["movie_director"] + "</th>";
-        rowHTML += "<th>" + resultData[i]["movie_genres"] + "</th>"
+        rowHTML += "<th>";
+        // let movies = resultData[i]["movies"].split(", ");
+        // for (let j = 0; j < movies.length; j++) {
+        rowHTML += '<a href="single-movie.html?id=' + resultData[i]["movie_id2"] + '">' + resultData[i]["movie_title"] + '</a>';
 
-        // rowHTML += "<th>" + resultData[i]["movie_stars"] + "</th>";
-        let star_list = resultData[i]["movie_stars"].split(", ");
-        let star_html = "";
-        for (let name of star_list) {
-            star_html += '<a href="abc.html?name=' + name + '&id=' + resultData[i]["movie_id"] + '">' + name + '</a>, ';
-        }
-        rowHTML += "<th>" + star_html + "</th>"
-
-        rowHTML += "<th>" + resultData[i]["movie_rating"] + "</th>";
+            // Add a comma and space after each star (except the last one)
+        //     if (j < movies.length - 1) {
+        //         rowHTML += ", ";
+        //     }
+        // }
+        rowHTML += "</th>";
         rowHTML += "</tr>";
 
         // Append the row created to the table body, which will refresh the page
@@ -83,12 +81,12 @@ function handleResult(resultData) {
  */
 
 // Get id from URL
-let starId = getParameterByName('id');
-
+let name = getParameterByName('name');
+let id = getParameterByName('id');
 // Makes the HTTP GET request and registers on success callback function handleResult
 jQuery.ajax({
     dataType: "json",  // Setting return data type
     method: "GET",// Setting request method
-    url: "api/single-movie?id=" + starId, // Setting request url, which is mapped by StarsServlet in Stars.java
+    url: "api/single-star?name=" + name + "&id=" + id, // Setting request url, which is mapped by StarsServlet in Stars.java
     success: (resultData) => handleResult(resultData) // Setting callback function to handle data returned successfully by the SingleStarServlet
 });

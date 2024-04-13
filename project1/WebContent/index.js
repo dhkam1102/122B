@@ -27,8 +27,8 @@ function handleStarResult(resultData) {
         rowHTML += "<tr>";
         rowHTML +=
             "<th>" +
-            // Add a link to single-star.html with id passed with GET url parameter
-            '<a href="single-star.html?id=' + resultData[i]['movie_id'] + '">'
+            // Add a link to single-movie.html with id passed with GET url parameter
+            '<a href="single-movie.html?id=' + resultData[i]['movie_id'] + '">'
             + resultData[i]["movie_title"] +     // display star_name for the link text
             '</a>' +
             "</th>";
@@ -39,7 +39,7 @@ function handleStarResult(resultData) {
         rowHTML += "<th>";
         let stars = resultData[i]["movie_star"].split(", ");
         for (let j = 0; j < stars.length; j++) {
-            rowHTML += '<a href="abc.html?name=' + stars[j] + '&id=' + resultData[i]["movie_id"] + '">' + stars[j] + '</a>';
+            rowHTML += '<a href="single-star.html?name=' + stars[j] + '&id=' + resultData[i]["movie_id"] + '">' + stars[j] + '</a>';
             // Add a comma and space after each star (except the last one)
             if (j < stars.length - 1) {
                 rowHTML += ", ";

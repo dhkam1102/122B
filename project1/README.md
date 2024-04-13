@@ -66,18 +66,18 @@ mysql> quit;
 6. To run the example, follow the instructions in canvas.
 
 ### Brief Explanation
-- `StarsServlet.java` is a Java servlet that talks to the database and get the stars. It returns a list of stars in the JSON format. 
+- `MovieList.java` is a Java servlet that talks to the database and get the stars. It returns a list of stars in the JSON format. 
 The name of star is generated as a link to Single Star page.
 
-- `index.js` is the main Javascript file that initiates an HTTP GET request to the `StarsServlet`. After the response is returned, `index.js` populates the table using the data it gets.
+- `index.js` is the main Javascript file that initiates an HTTP GET request to the `MovieList`. After the response is returned, `MovieList.js` populates the table using the data it gets.
 
-- `index.html` is the main HTML file that imports jQuery, Bootstrap, and `index.js`. It also contains the initial skeleton for the table.
+- `index.html` is the main HTML file that imports jQuery, Bootstrap, and `MovieList.js`. It also contains the initial skeleton for the table.
 
-- `SingleStarServlet.java` is a Java servlet that talks to the database and get information about one Star and all the movie this Star performed. It returns a list of Movies in the JSON format. 
+- `SingleMovie.java` is a Java servlet that talks to the database and get information about one Star and all the movie this Star performed. It returns a list of Movies in the JSON format. 
 
-- `single-star.js` is the Javascript file that initiates an HTTP GET request to the `SingleStarServlet`. After the response is returned, `single-star.js` populates the table using the data it gets.
+- `single-movie.js` is the Javascript file that initiates an HTTP GET request to the `SingleMovie`. After the response is returned, `single-movie.js` populates the table using the data it gets.
 
-- `single-star.html` is the HTML file that imports jQuery, Bootstrap, and `single-star.js`. It also contains the initial skeleton for the movies table.
+- `single-star.html` is the HTML file that imports jQuery, Bootstrap, and `single-movie.js`. It also contains the initial skeleton for the movies table.
 
 ### Separating frontend and backend
 - For project 1, you are recommended to separate frontend and backend. Backend Java Servlet only provides API in JSON format. Frontend Javascript code fetches the data through HTTP (ajax) requests and then display the data on the webpage. 
@@ -91,6 +91,6 @@ The name of star is generated as a link to Single Star page.
 - `WebContent/META-INF/context.xml` contains a DataSource, with database information stored in it.
 `WEB-INF/web.xml` registers the DataSource to name jdbc/moviedbexample, which could be referred to anywhere in the project.
 
-- In both `SingleStarServlet.java` and `StarsServlet.java`, a private DataSource reference dataSource is created with `@Resource` annotation. It is a reference to the DataSource `jdbc/moviedbexample` we registered in `web.xml`
+- In both `SingleMovie.java` and `MovieList.java`, a private DataSource reference dataSource is created with `@Resource` annotation. It is a reference to the DataSource `jdbc/moviedbexample` we registered in `web.xml`
 
 - To use DataSource, you can create a new connection to it by `dataSource.getConnection()`, and you can use the connection as previous examples.
