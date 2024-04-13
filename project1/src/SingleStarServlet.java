@@ -101,6 +101,7 @@ public class SingleStarServlet extends HttpServlet {
                 float rating = rs.getFloat("rating");
 
                 JsonObject jsonObject = new JsonObject();
+                jsonObject.addProperty("movie_id", id);
                 jsonObject.addProperty("movie_title", movieTitle);
                 jsonObject.addProperty("movie_year", movieYear);
                 jsonObject.addProperty("movie_director", movieDirector);

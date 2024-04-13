@@ -66,7 +66,7 @@ function handleResult(resultData) {
         let star_list = resultData[i]["movie_stars"].split(", ");
         let star_html = "";
         for (let name of star_list) {
-            star_html += '<a href="single-star.html?star_name=' + name + '&movie_title=' + resultData[i]["movie_title"] + '">' + name + '</a>, ';
+            star_html += '<a href="abc.html?name=' + name + '&id=' + resultData[i]["movie_id"] + '">' + name + '</a>, ';
         }
         rowHTML += "<th>" + star_html + "</th>"
 
