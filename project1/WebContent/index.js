@@ -19,7 +19,6 @@ function handleStarResult(resultData) {
     // Populate the star table
     // Find the empty table body by id "star_table_body"
     let starTableBodyElement = jQuery("#star_table_body");
-    console.log(resultData.length);
     // Iterate through resultData, no more than 10 entries
     for (let i = 0; i < resultData.length; i++) {
 
@@ -29,14 +28,24 @@ function handleStarResult(resultData) {
         rowHTML +=
             "<th>" +
             // Add a link to single-star.html with id passed with GET url parameter
-            '<a href="single-star.html?id=' + resultData[i]['star_id'] + '">'
+            '<a href="single-star.html?id=' + resultData[i]['movie_id'] + '">'
             + resultData[i]["movie_title"] +     // display star_name for the link text
             '</a>' +
             "</th>";
         rowHTML += "<th>" + resultData[i]["movie_year"] + "</th>";
         rowHTML += "<th>" + resultData[i]["movie_director"] + "</th>";
         rowHTML += "<th>" + resultData[i]["movie_genre"] + "</th>";
-        rowHTML += "<th>" + resultData[i]["movie_star"] + "</th>";
+        //rowHTML += "<th>" + resultData[i]["movie_star"] + "</th>";
+        rowHTML += "<th>";
+        let stars = resultData[i]["movie_star"].split(", ");
+        for (let j = 0; j < stars.length; j++) {
+            rowHTML += '<a href="abc.html?name=' + stars[j] + '&id=' + resultData[i]["movie_id"] + '">' + stars[j] + '</a>';
+            // Add a comma and space after each star (except the last one)
+            if (j < stars.length - 1) {
+                rowHTML += ", ";
+            }
+        }
+        rowHTML += "</th>";
         rowHTML += "<th>" + resultData[i]["movie_rating"] + "</th>";
         rowHTML += "</tr>";
 

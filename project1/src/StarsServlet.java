@@ -48,19 +48,19 @@ public class StarsServlet extends HttpServlet {
             // Declare our statement
             Statement statement = conn.createStatement();
 
-            String query = "SELECT m.title, m.year, m.director,\n" +
-                    "SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT g.name ORDER BY g.name SEPARATOR ', '), ', ', 3) AS genres,\n" +
-                    "SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT s.name ORDER BY s.name SEPARATOR ', '), ', ', 3) AS stars,\n" +
-                    "r.rating\n" +
-                    "FROM movies m\n" +
-                    "JOIN ratings r ON m.id = r.movieId\n" +
-                    "JOIN genres_in_movies gim ON m.id = gim.movieId\n" +
-                    "JOIN genres g ON gim.genreId = g.id\n" +
-                    "JOIN stars_in_movies sim ON m.id = sim.movieId\n" +
-                    "JOIN stars s ON sim.starId = s.id\n" +
-                    "GROUP BY m.id\n" +
-                    "ORDER BY r.rating DESC\n" +
-                    "LIMIT 20;";
+            String query = "SELECT m.id, m.title, m.year, m.director, " +
+                    "GROUP_CONCAT(DISTINCT g.name ORDER BY g.name SEPARATOR ', ') AS genres, " +
+                    "GROUP_CONCAT(DISTINCT s.name ORDER BY s.name SEPARATOR ', ') AS stars, " +
+                    "r.rating " +
+                    "FROM movies m " +
+                    "JOIN ratings r ON m.id = r.movieId " +
+                    "JOIN genres_in_movies gim ON m.id = gim.movieId " +
+                    "JOIN genres g ON gim.genreId = g.id " +
+                    "JOIN stars_in_movies sim ON m.id = sim.movieId " +
+                    "JOIN stars s ON sim.starId = s.id " +
+                    "GROUP BY m.id " +
+                    "ORDER BY r.rating DESC " +
+                    "LIMIT 20";
 
             // Perform the query
             ResultSet rs = statement.executeQuery(query);
@@ -69,6 +69,7 @@ public class StarsServlet extends HttpServlet {
 
             // Iterate through each row of rs
             while (rs.next()) {
+                String movie_id = rs.getString("m.id");
                 String movie_title = rs.getString("m.title");
                 String movie_year = rs.getString("m.year");
                 String movie_director = rs.getString("m.director");
@@ -78,6 +79,7 @@ public class StarsServlet extends HttpServlet {
 
                 // Create a JsonObject based on the data we retrieve from rs
                 JsonObject jsonObject = new JsonObject();
+                jsonObject.addProperty("movie_id", movie_id);
                 jsonObject.addProperty("movie_title", movie_title);
                 jsonObject.addProperty("movie_year", movie_year);
                 jsonObject.addProperty("movie_director", movie_director);
