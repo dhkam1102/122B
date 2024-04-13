@@ -76,12 +76,11 @@ public class abc extends HttpServlet {
                 String starId = rs.getString("starId");
 
                 String query2 = "SELECT s.name, IFNULL(s.birthYear, 'N/A') AS birthYear, " +
-                        "GROUP_CONCAT(m.title ORDER BY m.title SEPARATOR ', ') AS movies " +
+                        "m.id AS movie_id, m.title AS movie_title " +
                         "FROM stars s " +
                         "LEFT JOIN stars_in_movies sim ON s.id = sim.starId " +
                         "LEFT JOIN movies m ON sim.movieId = m.id " +
-                        "WHERE s.id = ? " +
-                        "GROUP BY s.id";
+                        "WHERE s.id = ?";
 
                 PreparedStatement statement2 = conn.prepareStatement(query2);
                 statement2.setString(1, starId);
@@ -92,7 +91,8 @@ public class abc extends HttpServlet {
 
                     String name = rs2.getString("name");
                     String birthYear = rs2.getString("birthYear");
-                    String movies = rs2.getString("movies");
+                    String movie_id2 = rs2.getString("movie_id");
+                    String movie_title = rs2.getString("movie_title");
 
                     // Create a JsonObject based on the data we retrieve from rs
 
@@ -100,7 +100,8 @@ public class abc extends HttpServlet {
                     jsonObject.addProperty("star_id", starId);
                     jsonObject.addProperty("star_name", name);
                     jsonObject.addProperty("birthYear", birthYear);
-                    jsonObject.addProperty("movies", movies);
+                    jsonObject.addProperty("movie_id2", movie_id2);
+                    jsonObject.addProperty("movie_title", movie_title);
 
                     jsonArray.add(jsonObject);
                 }

@@ -59,14 +59,15 @@ function handleResult(resultData) {
         let rowHTML = "";
         rowHTML += "<tr>";
         rowHTML += "<th>";
-        let movies = resultData[i]["movies"].split(", ");
-        for (let j = 0; j < movies.length; j++) {
-            rowHTML += '<a href="single-movie.html?starid=' + resultData["star_id"] + '&movie_name=' + movies[j] + '">' + movies[j] + '</a>';
+        // let movies = resultData[i]["movies"].split(", ");
+        // for (let j = 0; j < movies.length; j++) {
+        rowHTML += '<a href="single-star.html?id=' + resultData[i]["movie_id2"] + '">' + resultData[i]["movie_title"] + '</a>';
+
             // Add a comma and space after each star (except the last one)
-            if (j < movies.length - 1) {
-                rowHTML += ", ";
-            }
-        }
+        //     if (j < movies.length - 1) {
+        //         rowHTML += ", ";
+        //     }
+        // }
         rowHTML += "</th>";
         rowHTML += "</tr>";
 
