@@ -2,9 +2,9 @@
 
 ## Team-49 
 
-### Brian Kam
+### Brian Kam (bdkam@uci.edu)
 - **Single Movie Page**, **Database Create SQL**, **Video Recording**
-### Seung Yup Yum
+### Seung Yup Yum (syyum@uci.edu)
 - **Movie List Page**, **Single Star Page**, **Database Create SQL**
 
 ### Project Demonstration Video
