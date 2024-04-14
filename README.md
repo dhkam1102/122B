@@ -1,6 +1,6 @@
 # Project Contributions
 
-## Team 49 
+## Team-49 
 
 ### Brian Kam
 - **Single Movie Page**, **Database Create SQL**, **Video Recording**
