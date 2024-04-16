@@ -18,37 +18,42 @@ function handleStarResult(resultData) {
 
     // Populate the star table
     // Find the empty table body by id "star_table_body"
-    let starContainerElement = jQuery("#star_container");
-
+    let starTableBodyElement = jQuery("#star_table_body");
+    // Iterate through resultData, no more than 10 entries
     for (let i = 0; i < resultData.length; i++) {
-        let starDiv = jQuery("<div>");
-        starDiv.addClass("star-item");
 
-        let movieNumber = i + 1;
-        let movieId = resultData[i]['movie_id'];
-        let movieTitle = resultData[i]['movie_title'];
-        let movieYear = resultData[i]['movie_year'];
-        let movieDirector = resultData[i]['movie_director'];
-        let movieGenre = resultData[i]['movie_genre'];
-        let movieStars = resultData[i]['movie_star'].split(", ");
-        let movieRating = resultData[i]['movie_rating'];
-
-        let details = `
-        <span><i>${movieNumber}.</i> <b>Movie:</b> <a href="single-movie.html?id=${movieId}">${movieTitle}</a> (${movieYear}), <b>Directed by:</b> ${movieDirector}, <b>Genres:</b> ${movieGenre}, <b>Stars:</b> `;
-
-        for (let j = 0; j < movieStars.length; j++) {
-            details += `<a href="single-star.html?name=${movieStars[j]}&id=${movieId}">${movieStars[j]}</a>`;
-            if (j < movieStars.length - 1) {
-                details += ", ";
+        // Concatenate the html tags with resultData jsonObject
+        let rowHTML = "";
+        rowHTML += "<tr>";
+        rowHTML +=
+            "<th>" +
+            // Add a link to single-movie.html with id passed with GET url parameter
+            '<a href="single-movie.html?id=' + resultData[i]['movie_id'] + '">'
+            + resultData[i]["movie_title"] +     // display star_name for the link text
+            '</a>' +
+            "</th>";
+        rowHTML += "<th>" + resultData[i]["movie_year"] + "</th>";
+        rowHTML += "<th>" + resultData[i]["movie_director"] + "</th>";
+        rowHTML += "<th>" + resultData[i]["movie_genre"] + "</th>";
+        //rowHTML += "<th>" + resultData[i]["movie_star"] + "</th>";
+        rowHTML += "<th>";
+        let stars = resultData[i]["movie_star"].split(", ");
+        for (let j = 0; j < stars.length; j++) {
+            rowHTML += '<a href="single-star.html?name=' + stars[j] + '&id=' + resultData[i]["movie_id"] + '">' + stars[j] + '</a>';
+            // Add a comma and space after each star (except the last one)
+            if (j < stars.length - 1) {
+                rowHTML += ", ";
             }
         }
+        rowHTML += "</th>";
+        rowHTML += "<th>" + resultData[i]["movie_rating"] + "</th>";
+        rowHTML += "</tr>";
 
-        details += `, <b>Rating:</b> ${movieRating}</span>`;
-        starDiv.append(details);
-
-        starContainerElement.append(starDiv);
+        // Append the row created to the table body, which will refresh the page
+        starTableBodyElement.append(rowHTML);
     }
 }
+
 
 /**
  * Once this .js is loaded, following scripts will be executed by the browser

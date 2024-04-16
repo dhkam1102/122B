@@ -46,24 +46,33 @@ function handleResult(resultData) {
 
     // append two html <p> created to the h3 body, which will refresh the page
     starInfoElement.append("<p>Star Name: " + resultData[0]["star_name"] + "</p>" +
-        "<p>Date Of Birth: " + resultData[0]["birthYear"] + "</p>" +
-        "<p>Movie List of Actor: " + "</p>");
+        "<p>Date Of Birth: " + resultData[0]["birthYear"] + "</p>");
 
     console.log("handleResult: populating movie table from resultData");
 
     // Populate the star table
     // Find the empty table body by id "movie_table_body"
-    let movieListElement = jQuery("#movie_list");
+    let movieTableBodyElement = jQuery("#movie_table_body");
 
-    // Concatenate the html tags with resultData jsonObject to create movie list
+    // Concatenate the html tags with resultData jsonObject to create table rows
     for (let i = 0; i < Math.min(10, resultData.length); i++) {
-        let movieHTML = "";
-        movieHTML += "<div class='movie'>";
-        movieHTML += '<a href="single-movie.html?id=' + resultData[i]["movie_id2"] + '">' + resultData[i]["movie_title"] + '</a>';
-        movieHTML += "</div>";
+        let rowHTML = "";
+        rowHTML += "<tr>";
+        rowHTML += "<th>";
+        // let movies = resultData[i]["movies"].split(", ");
+        // for (let j = 0; j < movies.length; j++) {
+        rowHTML += '<a href="single-movie.html?id=' + resultData[i]["movie_id2"] + '">' + resultData[i]["movie_title"] + '</a>';
 
-        // Append the movie to the movie list container
-        movieListElement.append(movieHTML);
+        // Add a comma and space after each star (except the last one)
+        //     if (j < movies.length - 1) {
+        //         rowHTML += ", ";
+        //     }
+        // }
+        rowHTML += "</th>";
+        rowHTML += "</tr>";
+
+        // Append the row created to the table body, which will refresh the page
+        movieTableBodyElement.append(rowHTML);
     }
 }
 
