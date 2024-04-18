@@ -18,40 +18,41 @@ function handleStarResult(resultData) {
 
     // Populate the star table
     // Find the empty table body by id "star_table_body"
-    let starTableBodyElement = jQuery("#star_table_body");
-    // Iterate through resultData, no more than 10 entries
-    for (let i = 0; i < resultData.length; i++) {
+    let genreTableBodyElement = jQuery("#genre_table_body");
+    let numRows = Math.ceil(resultData.length / 5); // Calculate number of rows needed
+    let dataIndex = 0; // Index for accessing data in resultData array
 
-        // Concatenate the html tags with resultData jsonObject
-        let rowHTML = "";
-        rowHTML += "<tr>";
-        rowHTML +=
-            "<th>" +
-            // Add a link to single-movie.html with id passed with GET url parameter
-            '<a href="single-movie.html?id=' + resultData[i]['movie_id'] + '">'
-            + resultData[i]["movie_title"] +     // display star_name for the link text
-            '</a>' +
-            "</th>";
-        rowHTML += "<th>" + resultData[i]["movie_year"] + "</th>";
-        rowHTML += "<th>" + resultData[i]["movie_director"] + "</th>";
-        rowHTML += "<th>" + resultData[i]["movie_genre"] + "</th>";
-        //rowHTML += "<th>" + resultData[i]["movie_star"] + "</th>";
-        rowHTML += "<th>";
-        let stars = resultData[i]["movie_star"].split(", ");
-        for (let j = 0; j < stars.length; j++) {
-            rowHTML += '<a href="single-star.html?name=' + stars[j] + '&id=' + resultData[i]["movie_id"] + '">' + stars[j] + '</a>';
-            // Add a comma and space after each star (except the last one)
-            if (j < stars.length - 1) {
-                rowHTML += ", ";
+    // Iterate through each row
+    for (let i = 0; i < numRows; i++) {
+        let row = "<tr>"; // Start a new row
+        // Iterate through each column in the row
+        for (let j = 0; j < 5; j++) {
+            if (dataIndex < resultData.length) {
+                // Add data as a hyperlink to the cell if there is data available
+                row += "<td><a href='movie-list.html?genre=" + resultData[dataIndex]['genre_name'] + "'>" + resultData[dataIndex]['genre_name'] + "</a></td>";
+                dataIndex ++;
+            } else {
+                // Add empty cell if no more data is available
+                row += "<td></td>";
             }
         }
-        rowHTML += "</th>";
-        rowHTML += "<th>" + resultData[i]["movie_rating"] + "</th>";
-        rowHTML += "</tr>";
-
-        // Append the row created to the table body, which will refresh the page
-        starTableBodyElement.append(rowHTML);
+        row += "</tr>"; // Close the row
+        genreTableBodyElement.append(row); // Add the row to the table
     }
+
+    let specialCharsTableBodyElement = jQuery("#first_letter_table_body");
+    let specialCharsRow = "<tr><td>";
+
+    // Define the characters to include in the hyperlinks
+    let characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ*";
+
+    // Iterate through each character and add a hyperlink to it in the row
+    for (let char of characters) {
+        specialCharsRow += "<a href='movie-list.html?letter=" + char + "'>" + char + "</a>";
+    }
+
+    specialCharsRow += "</td></tr>";
+    specialCharsTableBodyElement.append(specialCharsRow);
 }
 
 
