@@ -29,7 +29,7 @@ function handleStarResult(resultData) {
         for (let j = 0; j < 5; j++) {
             if (dataIndex < resultData.length) {
                 // Add data as a hyperlink to the cell if there is data available
-                row += "<td><a href='movie-list.html?genre=" + resultData[dataIndex]['genre_name'] + "'>" + resultData[dataIndex]['genre_name'] + "</a></td>";
+                row += "<td><a href='movie-list.html?genre=" + encodeURIComponent(resultData[dataIndex]['genre_name']) + "'>" + resultData[dataIndex]['genre_name'] + "</a></td>";
                 dataIndex ++;
             } else {
                 // Add empty cell if no more data is available
@@ -48,7 +48,7 @@ function handleStarResult(resultData) {
 
     // Iterate through each character and add a hyperlink to it in the row
     for (let char of characters) {
-        specialCharsRow += "<a href='movie-list.html?letter=" + char + "'>" + char + "</a>";
+        specialCharsRow += "<a href='movie-list.html?letter=" + encodeURIComponent(char) + "'>" + char + "</a>";
     }
 
     specialCharsRow += "</td></tr>";
