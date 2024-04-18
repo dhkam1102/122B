@@ -33,7 +33,8 @@
     Movie title   : <input type="text" name="title"> (Use % to replace any strings. e.g. Arnold%)<br>
     Movie year    : <input type="text" name="year"> (Use % to replace any strings. e.g. Arnold%)<br>
     Movie Director: <input type="text" name="director"> (Use % to replace any strings. e.g. Arnold%)<br>
-    <input type="submit" value="Search Star" onclick="setNullIfEmpty()">
+    <input type="submit" value="Search Star">
+<!--    onclick="setNullIfEmpty()"-->
 </form>
 
     <table id="genreTable" border="1">
@@ -53,13 +54,13 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 <script>
-    function setNullIfEmpty() {
-        document.querySelectorAll('input[type="text"]').forEach(input => {
-            if (input.value.trim() === '') {
-                input.value = 'null';
-            }
-        });
-    }
+    // function setNullIfEmpty() {
+    //     document.querySelectorAll('input[type="text"]').forEach(input => {
+    //         if (input.value.trim() === '') {
+    //             input.value = 'null';
+    //         }
+    //     });
+    // }
 </script>
 <!-- Load our own JS file -->
 <!-- The path is relative to index.html, since these two files are in the same directory -->

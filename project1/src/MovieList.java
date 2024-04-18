@@ -145,21 +145,23 @@ public class MovieList extends HttpServlet {
                 queryBuilder.append("JOIN stars s ON sim.starId = s.id ");
                 queryBuilder.append("WHERE 1=1 ");
 
-                if (year != null) {
+                if (year != null && !year.isEmpty()) {
                     queryBuilder.append("AND m.year = '").append(year).append("' ");
                 }
-                if (director != null) {
-                    queryBuilder.append("AND m.director = '").append(director).append("' ");
+                if (director != null && !director.isEmpty()) {
+                    queryBuilder.append("AND m.director LIKE '%").append(director).append("%' ");
                 }
-                if (name != null) {
-                    queryBuilder.append("AND s.name = '").append(name).append("' ");
+                if (name != null && !name.isEmpty()) {
+                    queryBuilder.append("AND s.name LIKE '%").append(name).append("%' ");
                 }
-                if (title != null) {
-                    queryBuilder.append("AND m.title = '").append(title).append("' ");
+                if (title != null && !title.isEmpty()) {
+                    queryBuilder.append("AND m.title LIKE '%").append(title).append("%' ");
                 }
 
                 queryBuilder.append("GROUP BY m.id, m.title, m.year, m.director ");
                 query = queryBuilder.toString();
+                System.out.println(query);
+
                 statement = conn.prepareStatement(query);
             }
             // Perform the query
