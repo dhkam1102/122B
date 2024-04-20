@@ -47,7 +47,16 @@ function handleStarResult(resultData) {
         }
         rowHTML += "</th>";
         rowHTML += "<th>" + resultData[i]["movie_rating"] + "</th>";
+
+        // edited this part to make the buttons
+        rowHTML += "<td>";
+        rowHTML += "<button onclick='addToCart(\"" +
+            resultData[i]["movie_id"] + "\", \"" +
+            resultData[i]["movie_title"] + "\")'>Add to Cart</button>";
+        rowHTML += "</td>";
+
         rowHTML += "</tr>";
+
 
         // Append the row created to the table body, which will refresh the page
         starTableBodyElement.append(rowHTML);
@@ -55,13 +64,53 @@ function handleStarResult(resultData) {
 }
 
 
+function good(response) {
+    console.log("success", response);  // Log the success message and server response
+    if (response.status === "success") {
+        alert('Added to cart successfully!');  // Alert the user of success
+    } else {
+        alert('Failed to add to cart: ' + response.message);  // Alert the user of the failure message from server
+    }
+}
+
+function bad(jqXHR, textStatus, errorThrown) {
+    console.log("Fail", textStatus, errorThrown, jqXHR.responseText);  // Log the failure message along with server response
+    let responseJson = {};
+    try {
+        responseJson = JSON.parse(jqXHR.responseText);
+        alert('Failed to add to cart: ' + (responseJson.message || 'Unknown error occurred'));  // Alert the user of failure with server message
+    } catch (e) {
+        console.error("Error parsing server response: ", e);
+        alert('Failed to add to cart. An unknown error occurred.');  // Alert the user of failure without server message
+    }
+}
+
+function addToCart(movie_id, movie_title) {
+    // Makes the HTTP GET request and registers on success callback function handleResult
+    let dataSend = {
+        "movie_id": movie_id,
+        "movie_title": movie_title,
+        "quantity": "1",
+        "delete": "NO"
+    };
+
+    jQuery.ajax({
+        dataType: "json",
+        method: "POST",
+        url: "api/shopping",
+        data: dataSend,
+        success: resultDataString => good(resultDataString),
+        error: bad
+    });
+};
+
 /**
  * Once this .js is loaded, following scripts will be executed by the browser
  */
 
 // Makes the HTTP GET request and registers on success callback function handleStarResult
 jQuery.ajax({
-    dataType: "json", // Setting return data type
+    dataType: "json",
     method: "GET", // Setting request method
     url: "api/movies", // Setting request url, which is mapped by StarsServlet in Stars.java
     success: (resultData) => handleStarResult(resultData) // Setting callback function to handle data returned successfully by the StarsServlet
