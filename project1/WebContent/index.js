@@ -29,7 +29,7 @@ function handleStarResult(resultData) {
         for (let j = 0; j < 5; j++) {
             if (dataIndex < resultData.length) {
                 // Add data as a hyperlink to the cell if there is data available
-                row += "<td><a href='movie-list.html?name=&title=&year=&director=&genre=" + encodeURIComponent(resultData[dataIndex]['genre_name']) + "&letter=&ts=ASC&rs=DESC&size=25&page=1'>" + resultData[dataIndex]['genre_name'] + "</a></td>";
+                row += "<td><a href='movie-list.html?name=&title=&year=&director=&genre=" + encodeURIComponent(resultData[dataIndex]['genre_name']) + "&letter=&ts=ASC1&rs=DESC2&size=25&page=1'>" + resultData[dataIndex]['genre_name'] + "</a></td>";
                 dataIndex ++;
             } else {
                 // Add empty cell if no more data is available
@@ -48,7 +48,7 @@ function handleStarResult(resultData) {
 
     // Iterate through each character and add a hyperlink to it in the row
     for (let char of characters) {
-        specialCharsRow += "<a href='movie-list.html?name=&title=&year=&director=&genre=&letter=" + encodeURIComponent(char) + "&ts=ASC&rs=DESC&size=25&page=1'>" + char + "</a>";
+        specialCharsRow += "<a href='movie-list.html?name=&title=&year=&director=&genre=&letter=" + encodeURIComponent(char) + "&ts=ASC1&rs=DESC2&size=25&page=1'>" + char + "</a>";
     }
 
     specialCharsRow += "</td></tr>";

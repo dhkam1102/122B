@@ -53,7 +53,7 @@ public class MovieList extends HttpServlet {
         String first_letter = request.getParameter("letter");
         request.getServletContext().log("getting first letter: " + first_letter);
         String title_sorting = request.getParameter("ts");
-        request.getServletContext().log("getting first letter: " + title_sorting);
+        request.getServletContext().log("getting title sorting: " + title_sorting);
         String rating_sorting = request.getParameter("rs");
         request.getServletContext().log("getting rating sorting: " + rating_sorting);
         String page_size = request.getParameter("size");
@@ -80,9 +80,47 @@ public class MovieList extends HttpServlet {
         try (Connection conn = dataSource.getConnection()) {
 
             String query = "";
+            String orderClause = "";
             PreparedStatement statement = null;
             if (!genre.isEmpty() && first_letter.isEmpty()){
                 System.out.println("genre selected");
+
+                if (title_sorting.equals("ASC1") || title_sorting.equals("DESC1")){
+                    if (rating_sorting.equals("ASC2")){
+                        if(title_sorting.equals("ASC1")){
+                            orderClause = "ORDER BY m.title ASC, rating ASC ";
+                        }
+                        else if (title_sorting.equals("DESC1")){
+                            orderClause = "ORDER BY m.title DESC, rating ASC ";
+                        }
+                    }
+                    else if (rating_sorting.equals("DESC2")){
+                        if(title_sorting.equals("ASC1")){
+                            orderClause = "ORDER BY m.title ASC, rating DESC ";
+                        }
+                        else if (title_sorting.equals("DESC1")){
+                            orderClause = "ORDER BY m.title DESC, rating DESC ";
+                        }
+                    }
+                }
+                else if (title_sorting.equals("ASC2") || title_sorting.equals("DESC2")){
+                    if (rating_sorting.equals("ASC1")){
+                        if(title_sorting.equals("ASC2")){
+                            orderClause = "ORDER BY rating ASC, m.title ASC ";
+                        }
+                        else if (title_sorting.equals("DESC2")){
+                            orderClause = "ORDER BY rating ASC, m.title DESC ";
+                        }
+                    }
+                    else if (rating_sorting.equals("DESC1")){
+                        if(title_sorting.equals("ASC2")){
+                            orderClause = "ORDER BY rating DESC, m.title ASC ";
+                        }
+                        else if (title_sorting.equals("DESC2")){
+                            orderClause = "ORDER BY rating DESC, m.title DESC ";
+                        }
+                    }
+                }
                 query = "SELECT COUNT(*) AS row_count, m.id AS movie_id, m.title, m.year, m.director, " +
                         "SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT g.name ORDER BY g.name SEPARATOR ', '), ', ', 3) AS genres, " +
                         "SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT s.name ORDER BY s.name SEPARATOR ', '), ', ', 3) AS stars, " +
@@ -95,13 +133,57 @@ public class MovieList extends HttpServlet {
                         "JOIN stars s ON sim.starId = s.id " +
                         "WHERE g.name = '" + genre + "' " +
                         "GROUP BY m.id, m.title, m.year, m.director " +
+                        orderClause +
                         "LIMIT " + page_size + " OFFSET " + offset;
                 System.out.println(query);
 
                 statement = conn.prepareStatement(query);
             } else if (genre.isEmpty() && !first_letter.isEmpty()) {
-                System.out.println("letter selected");
+                String whereClause;
+                if ("*".equals(first_letter)) {
+                    // Show movies that start with non-alphanumeric characters
+                    whereClause = "WHERE UPPER(LEFT(m.title, 1)) REGEXP '[^A-Za-z0-9]'";
+                } else {
+                    // Show movies that start with the specified letter
+                    whereClause = "WHERE UPPER(LEFT(m.title, 1)) = '" + first_letter.toUpperCase() + "'";
+                }
 
+                if (title_sorting.equals("ASC1") || title_sorting.equals("DESC1")){
+                    if (rating_sorting.equals("ASC2")){
+                        if(title_sorting.equals("ASC1")){
+                            orderClause = "ORDER BY m.title ASC, rating ASC ";
+                        }
+                        else if (title_sorting.equals("DESC1")){
+                            orderClause = "ORDER BY m.title DESC, rating ASC ";
+                        }
+                    }
+                    else if (rating_sorting.equals("DESC2")){
+                        if(title_sorting.equals("ASC1")){
+                            orderClause = "ORDER BY m.title ASC, rating DESC ";
+                        }
+                        else if (title_sorting.equals("DESC1")){
+                            orderClause = "ORDER BY m.title DESC, rating DESC ";
+                        }
+                    }
+                }
+                else if (title_sorting.equals("ASC2") || title_sorting.equals("DESC2")){
+                    if (rating_sorting.equals("ASC1")){
+                        if(title_sorting.equals("ASC2")){
+                            orderClause = "ORDER BY rating ASC, m.title ASC ";
+                        }
+                        else if (title_sorting.equals("DESC2")){
+                            orderClause = "ORDER BY rating ASC, m.title DESC ";
+                        }
+                    }
+                    else if (rating_sorting.equals("DESC1")){
+                        if(title_sorting.equals("ASC2")){
+                            orderClause = "ORDER BY rating DESC, m.title ASC ";
+                        }
+                        else if (title_sorting.equals("DESC2")){
+                            orderClause = "ORDER BY rating DESC, m.title DESC ";
+                        }
+                    }
+                }
                 query = "SELECT COUNT(*) AS row_count, m.id AS movie_id, m.title, m.year, m.director, " +
                         "SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT g.name ORDER BY g.name SEPARATOR ', '), ', ', 3) AS genres, " +
                         "SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT s.name ORDER BY s.name SEPARATOR ', '), ', ', 3) AS stars, " +
@@ -112,13 +194,52 @@ public class MovieList extends HttpServlet {
                         "JOIN genres g ON gim.genreId = g.id " +
                         "JOIN stars_in_movies sim ON m.id = sim.movieId " +
                         "JOIN stars s ON sim.starId = s.id " +
-                        "WHERE UPPER(LEFT(m.title, 1)) = '" + first_letter.toUpperCase() + "' " + // Filter titles starting with 'A'
+                        whereClause +
                         "GROUP BY m.id, m.title, m.year, m.director " +
+                        orderClause +
                         "LIMIT " + page_size + " OFFSET " + offset;
 
                 statement = conn.prepareStatement(query);
 //                statement.setString(1, first_letter);
             } else if (genre.isEmpty() && first_letter.isEmpty()) {
+
+                if (title_sorting.equals("ASC1") || title_sorting.equals("DESC1")){
+                    if (rating_sorting.equals("ASC2")){
+                        if(title_sorting.equals("ASC1")){
+                            orderClause = "ORDER BY m.title ASC, rating ASC ";
+                        }
+                        else if (title_sorting.equals("DESC1")){
+                            orderClause = "ORDER BY m.title DESC, rating ASC ";
+                        }
+                    }
+                    else if (rating_sorting.equals("DESC2")){
+                        if(title_sorting.equals("ASC1")){
+                            orderClause = "ORDER BY m.title ASC, rating DESC ";
+                        }
+                        else if (title_sorting.equals("DESC1")){
+                            orderClause = "ORDER BY m.title DESC, rating DESC ";
+                        }
+                    }
+                }
+                else if (title_sorting.equals("ASC2") || title_sorting.equals("DESC2")){
+                    if (rating_sorting.equals("ASC1")){
+                        if(title_sorting.equals("ASC2")){
+                            orderClause = "ORDER BY rating ASC, m.title ASC";
+                        }
+                        else if (title_sorting.equals("DESC2")){
+                            orderClause = "ORDER BY rating ASC, m.title DESC";
+                        }
+                    }
+                    else if (rating_sorting.equals("DESC1")){
+                        if(title_sorting.equals("ASC2")){
+                            orderClause = "ORDER BY rating DESC, m.title ASC";
+                        }
+                        else if (title_sorting.equals("DESC2")){
+                            orderClause = "ORDER BY rating DESC, m.title DESC";
+                        }
+                    }
+                }
+
                 System.out.println("search selected");
                 StringBuilder queryBuilder = new StringBuilder();
                 queryBuilder.append("SELECT COUNT(*) AS row_count, m.id AS movie_id, m.title, m.year, m.director, ");
@@ -146,6 +267,7 @@ public class MovieList extends HttpServlet {
                     queryBuilder.append("AND m.title LIKE '%").append(title).append("%' ");
                 }
 
+                queryBuilder.append(orderClause);
                 queryBuilder.append("GROUP BY m.id, m.title, m.year, m.director ");
                 queryBuilder.append("LIMIT ").append(page_size).append(" OFFSET ").append(offset);
                 query = queryBuilder.toString();

@@ -23,7 +23,25 @@
 
 
 <h1>Movies</h1>
+<label for="page-size">Page Size:</label>
+<select id="page-size" onchange="changePageSize(this)">
+    <option value="10">10</option>
+    <option value="25">25</option>
+    <option value="50">50</option>
+    <option value="100">100</option>
+</select>
 
+<label for="sorting">Sorting:</label>
+<select id="sorting" onchange="changeSorting(this)">
+    <option value="ts ASC1 rs DESC2">Title &uarr;, Rating &darr;</option>
+    <option value="ts ASC1 rs ASC2">Title &uarr;, Rating &uarr;</option>
+    <option value="ts DESC1 rs DESC2">Title &darr;, Rating &darr;</option>
+    <option value="ts DESC1 rs ASC2">Title &darr;, Rating &uarr;</option>
+    <option value="ts DESC2 rs ACS1">Rating &uarr;, Title &darr;</option>
+    <option value="ts ASC2 rs ASC1">Rating &uarr;, Title &uarr;</option>
+    <option value="ts DESC2 rs DESC1">Rating &darr;, Title &darr;</option>
+    <option value="ts ASC2 rs DESC1">Rating &darr;, Title &uarr;</option>
+</select>
 <!-- Id "star_table" is useful for jQuery to find the html element with id, class here is mapping to Bootstrap defined class CSS -->
 <table id=star_table class="table table-striped">
     <!-- Create a table header -->

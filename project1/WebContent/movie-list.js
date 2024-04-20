@@ -29,6 +29,28 @@ function getParameterByName(target) {
     return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
+window.addEventListener('DOMContentLoaded', (event) => {
+    let urlParams = new URLSearchParams(window.location.search);
+    let pageSize = urlParams.get('size'); // Default to 25 if 'size' parameter is not present
+    document.getElementById('page-size').value = pageSize;
+});
+
+function changePageSize(selectElement) {
+    let newSize = selectElement.value;
+    let urlParams = new URLSearchParams(window.location.search);
+    urlParams.set('size', newSize);
+    window.location.search = urlParams.toString();
+}
+
+function changeSorting(selectElement) {
+    let sortValue = selectElement.value;
+    let sortValues = sortValue.split(' ');
+    let urlParams = new URLSearchParams(window.location.search);
+    urlParams.set('ts', sortValues[1]); // Get the sorting direction for title
+    urlParams.set('rs', sortValues[3]); // Get the sorting direction for rating
+    window.location.search = urlParams.toString();
+}
+
 function handleStarResult(resultData) {
     console.log("handleStarResult: populating star table from resultData");
 
