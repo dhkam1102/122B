@@ -32,7 +32,11 @@ function getParameterByName(target) {
 window.addEventListener('DOMContentLoaded', (event) => {
     let urlParams = new URLSearchParams(window.location.search);
     let pageSize = urlParams.get('size'); // Default to 25 if 'size' parameter is not present
+    let title_sorting = urlParams.get('ts')
+    let rating_sorting = urlParams.get('rs');
+    let sorting_option = 'ts ' + title_sorting + ' rs ' + rating_sorting;
     document.getElementById('page-size').value = pageSize;
+    document.getElementById('sorting').value = sorting_option;
 });
 
 function changePageSize(selectElement) {
