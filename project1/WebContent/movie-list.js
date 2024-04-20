@@ -80,36 +80,38 @@ let year = getParameterByName('year');
 let director = getParameterByName('director');
 let genre = getParameterByName('genre');
 let letter = getParameterByName('letter');
-
-let url_form = "api/movie-list?";
-if (name) {
-    url_form += "name=" + name + "&";
-}
-if (title) {
-    url_form += "title=" + title + "&";
-}
-if (year) {
-    url_form += "year=" + year + "&";
-}
-if (director) {
-    url_form += "director=" + director + "&";
-}
-if (genre) {
-    url_form += "genre=" + genre + "&";
-}
-if (letter) {
-    url_form += "letter=" + letter + "&";
-}
-
-// Remove the trailing "&" if there are any parameters
-if (url_form.endsWith("&")) {
-    url_form = url_form.slice(0, -1);
-}
+let ts = getParameterByName('ts');
+let rs = getParameterByName('rs');
+let size = getParameterByName('size');
+let page = getParameterByName('page');
+// let url_form = "api/movie-list?";
+// if (name) {
+//     url_form += "name=" + name + "&";
+// }
+// if (title) {
+//     url_form += "title=" + title + "&";
+// }
+// if (year) {
+//     url_form += "year=" + year + "&";
+// }
+// if (director) {
+//     url_form += "director=" + director + "&";
+// }
+// if (genre) {
+//     url_form += "genre=" + genre + "&";
+// }
+// if (letter) {
+//     url_form += "letter=" + letter + "&";
+// }
+//
+// // Remove the trailing "&" if there are any parameters
+// if (url_form.endsWith("&")) {
+//     url_form = url_form.slice(0, -1);
+// }
 // Makes the HTTP GET request and registers on success callback function handleStarResult
 jQuery.ajax({
     dataType: "json", // Setting return data type
     method: "GET", // Setting request method
-    url: url_form,
-    // url: "api/movie-list?name=" + name + "&title=" + title + "&year=" + year + "&director=" + director,
+    url: "api/movie-list?name=" + name + "&title=" + title + "&year=" + year + "&director=" + director + "&genre=" + genre + "&letter=" + letter + '&ts=' + ts + '&rs=' + rs +'&size=' + size + '&page=' + page,
     success: (resultData) => handleStarResult(resultData) // Setting callback function to handle data returned successfully by the StarsServlet
 });

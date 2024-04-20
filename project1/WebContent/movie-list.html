@@ -43,6 +43,65 @@
     <tbody id=star_table_body></tbody>
 </table>
 
+<style>
+    .pagination-container {
+        text-align: center;
+    }
+
+    .pagination {
+        display: inline-block;
+    }
+
+    .pagination a {
+        margin: 0 80px; /* Adjust the spacing between links */
+    }
+</style>
+
+<div class="pagination-container">
+    <div class="pagination">
+        <a href="#" id="prevBtn" class="btn btn-primary">Prev</a>
+        <a href="#" id="nextBtn" class="btn btn-primary">Next</a>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        let prevBtn = document.getElementById('prevBtn');
+        let nextBtn = document.getElementById('nextBtn');
+
+        // Get the current URL
+        let currentUrl = window.location.href;
+
+        // Add event listeners to the buttons
+        prevBtn.addEventListener('click', function(event) {
+            event.preventDefault();
+            let currentPage = getQueryParam('page');
+            if (currentPage > 1) {
+                let prevPage = currentPage - 1;
+                window.location.href = updateQueryParam(currentUrl, 'page', prevPage);
+            }
+        });
+
+        nextBtn.addEventListener('click', function(event) {
+            event.preventDefault();
+            let nextPage = getQueryParam('page') + 1;
+            window.location.href = updateQueryParam(currentUrl, 'page', nextPage);
+        });
+
+        // Function to get query parameter value
+        function getQueryParam(name) {
+            let params = new URLSearchParams(window.location.search);
+            return parseInt(params.get(name)) || 1;
+        }
+
+        // Function to update query parameter value
+        function updateQueryParam(url, key, value) {
+            let urlObj = new URL(url);
+            urlObj.searchParams.set(key, value);
+            return urlObj.toString();
+        }
+    });
+</script>
 <!-- Load jQuery and Bootstrap JS -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>

@@ -52,53 +52,38 @@ public class MovieList extends HttpServlet {
         request.getServletContext().log("getting genre: " + genre);
         String first_letter = request.getParameter("letter");
         request.getServletContext().log("getting first letter: " + first_letter);
+        String title_sorting = request.getParameter("ts");
+        request.getServletContext().log("getting first letter: " + title_sorting);
+        String rating_sorting = request.getParameter("rs");
+        request.getServletContext().log("getting rating sorting: " + rating_sorting);
+        String page_size = request.getParameter("size");
+        request.getServletContext().log("getting page_size: " + page_size);
+        int size = Integer.parseInt(page_size);
+        String page_number = request.getParameter("page");
+        request.getServletContext().log("getting page_number: " + page_number);
+        int page = Integer.parseInt(page_number);
+        int offset = (page - 1) * size;
 
         System.out.println("name parameter: " + name);
         System.out.println("title parameter: " + title);
         System.out.println("year parameter: " + year);
         System.out.println("director parameter: " + director);
         System.out.println("genre parameter: " + genre);
-        System.out.println("letter parameter: " + first_letter);
-
+        System.out.println("title_sorting parameter: " + title_sorting);
+        System.out.println("rating_sorting parameter: " + rating_sorting);
+        System.out.println("page_size parameter: " + page_size);
+        System.out.println("page_number parameter: " + page_number);
         // Output stream to STDOUT
         PrintWriter out = response.getWriter();
 
         // Get a connection from dataSource and let resource manager close the connection after usage.
         try (Connection conn = dataSource.getConnection()) {
 
-            // Declare our statement
-
-//            String query = "SELECT \n" +
-//                    "    m.id AS movie_id, \n" +
-//                    "    m.title, \n" +
-//                    "    m.year, \n" +
-//                    "    m.director,\n" +
-//                    "    SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT g.name ORDER BY g.name SEPARATOR ', '), ', ', 3) AS genres,\n" +
-//                    "    SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT s.name ORDER BY s.name SEPARATOR ', '), ', ', 3) AS stars,\n" +
-//                    "    MAX(r.rating) AS rating \n" +
-//                    "FROM \n" +
-//                    "    movies m\n" +
-//                    "JOIN \n" +
-//                    "    ratings r ON m.id = r.movieId\n" +
-//                    "JOIN \n" +
-//                    "    genres_in_movies gim ON m.id = gim.movieId\n" +
-//                    "JOIN \n" +
-//                    "    genres g ON gim.genreId = g.id\n" +
-//                    "JOIN \n" +
-//                    "    stars_in_movies sim ON m.id = sim.movieId\n" +
-//                    "JOIN \n" +
-//                    "    stars s ON sim.starId = s.id\n" +
-//                    "GROUP BY \n" +
-//                    "    m.id, m.title, m.year, m.director \n" +
-//                    "ORDER BY \n" +
-//                    "    MAX(r.rating) DESC \n" +
-//                    "LIMIT \n" +
-//                    "    20;\n";
             String query = "";
             PreparedStatement statement = null;
-            if (genre != null && first_letter == null){
+            if (!genre.isEmpty() && first_letter.isEmpty()){
                 System.out.println("genre selected");
-                query = "SELECT m.id AS movie_id, m.title, m.year, m.director, " +
+                query = "SELECT COUNT(*) AS row_count, m.id AS movie_id, m.title, m.year, m.director, " +
                         "SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT g.name ORDER BY g.name SEPARATOR ', '), ', ', 3) AS genres, " +
                         "SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT s.name ORDER BY s.name SEPARATOR ', '), ', ', 3) AS stars, " +
                         "MAX(r.rating) AS rating " +
@@ -109,13 +94,15 @@ public class MovieList extends HttpServlet {
                         "JOIN stars_in_movies sim ON m.id = sim.movieId " +
                         "JOIN stars s ON sim.starId = s.id " +
                         "WHERE g.name = '" + genre + "' " +
-                        "GROUP BY m.id, m.title, m.year, m.director";
+                        "GROUP BY m.id, m.title, m.year, m.director " +
+                        "LIMIT " + page_size + " OFFSET " + offset;
+                System.out.println(query);
 
                 statement = conn.prepareStatement(query);
-            } else if (genre == null && first_letter != null) {
+            } else if (genre.isEmpty() && !first_letter.isEmpty()) {
                 System.out.println("letter selected");
 
-                query = "SELECT m.id AS movie_id, m.title, m.year, m.director, " +
+                query = "SELECT COUNT(*) AS row_count, m.id AS movie_id, m.title, m.year, m.director, " +
                         "SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT g.name ORDER BY g.name SEPARATOR ', '), ', ', 3) AS genres, " +
                         "SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT s.name ORDER BY s.name SEPARATOR ', '), ', ', 3) AS stars, " +
                         "MAX(r.rating) AS rating " +
@@ -126,14 +113,15 @@ public class MovieList extends HttpServlet {
                         "JOIN stars_in_movies sim ON m.id = sim.movieId " +
                         "JOIN stars s ON sim.starId = s.id " +
                         "WHERE UPPER(LEFT(m.title, 1)) = '" + first_letter.toUpperCase() + "' " + // Filter titles starting with 'A'
-                        "GROUP BY m.id, m.title, m.year, m.director";
+                        "GROUP BY m.id, m.title, m.year, m.director " +
+                        "LIMIT " + page_size + " OFFSET " + offset;
 
                 statement = conn.prepareStatement(query);
 //                statement.setString(1, first_letter);
-            } else if (genre == null && first_letter == null) {
+            } else if (genre.isEmpty() && first_letter.isEmpty()) {
                 System.out.println("search selected");
                 StringBuilder queryBuilder = new StringBuilder();
-                queryBuilder.append("SELECT m.id AS movie_id, m.title, m.year, m.director, ");
+                queryBuilder.append("SELECT COUNT(*) AS row_count, m.id AS movie_id, m.title, m.year, m.director, ");
                 queryBuilder.append("SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT g.name ORDER BY g.name SEPARATOR ', '), ', ', 3) AS genres, ");
                 queryBuilder.append("SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT s.name ORDER BY s.name SEPARATOR ', '), ', ', 3) AS stars, ");
                 queryBuilder.append("MAX(r.rating) AS rating ");
@@ -159,6 +147,7 @@ public class MovieList extends HttpServlet {
                 }
 
                 queryBuilder.append("GROUP BY m.id, m.title, m.year, m.director ");
+                queryBuilder.append("LIMIT ").append(page_size).append(" OFFSET ").append(offset);
                 query = queryBuilder.toString();
                 System.out.println(query);
 
@@ -171,6 +160,7 @@ public class MovieList extends HttpServlet {
 
             // Iterate through each row of rs
             while (rs.next()) {
+                String row_count = rs.getString("row_count");
                 String movie_id = rs.getString("movie_id");
                 String movie_title = rs.getString("m.title");
                 String movie_year = rs.getString("m.year");
