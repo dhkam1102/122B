@@ -202,7 +202,7 @@ public class MovieList extends HttpServlet {
                 }
                 query = "SELECT COUNT(*) AS row_count, m.id AS movie_id, m.title, m.year, m.director, " +
                         "SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT g.name ORDER BY g.name SEPARATOR ', '), ', ', 3) AS genres, " +
-                        "SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT s.name ORDER BY s.name SEPARATOR ', '), ', ', 3) AS stars, " +
+                        "SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT s.name ORDER BY movies_played DESC, s.name SEPARATOR ', '), ', ', 3) AS stars, " +
                         "MAX(r.rating) AS rating " +
                         "FROM movies m " +
                         "JOIN ratings r ON m.id = r.movieId " +
@@ -210,6 +210,7 @@ public class MovieList extends HttpServlet {
                         "JOIN genres g ON gim.genreId = g.id " +
                         "JOIN stars_in_movies sim ON m.id = sim.movieId " +
                         "JOIN stars s ON sim.starId = s.id " +
+                        "LEFT JOIN (SELECT starId, COUNT(movieId) AS movies_played FROM stars_in_movies GROUP BY starId) as star_counts ON s.id = star_counts.starId " +
                         whereClause +
                         "GROUP BY m.id, m.title, m.year, m.director " +
                         orderClause +
@@ -260,7 +261,7 @@ public class MovieList extends HttpServlet {
                 StringBuilder queryBuilder = new StringBuilder();
                 queryBuilder.append("SELECT COUNT(*) AS row_count, m.id AS movie_id, m.title, m.year, m.director, ");
                 queryBuilder.append("SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT g.name ORDER BY g.name SEPARATOR ', '), ', ', 3) AS genres, ");
-                queryBuilder.append("SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT s.name ORDER BY s.name SEPARATOR ', '), ', ', 3) AS stars, ");
+                queryBuilder.append("SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT s.name ORDER BY star_counts.movies_played DESC, s.name SEPARATOR ', '), ', ', 3) AS stars, ");
                 queryBuilder.append("MAX(r.rating) AS rating ");
                 queryBuilder.append("FROM movies m ");
                 queryBuilder.append("JOIN ratings r ON m.id = r.movieId ");
@@ -268,6 +269,7 @@ public class MovieList extends HttpServlet {
                 queryBuilder.append("JOIN genres g ON gim.genreId = g.id ");
                 queryBuilder.append("JOIN stars_in_movies sim ON m.id = sim.movieId ");
                 queryBuilder.append("JOIN stars s ON sim.starId = s.id ");
+                queryBuilder.append("LEFT JOIN (SELECT starId, COUNT(movieId) AS movies_played FROM stars_in_movies GROUP BY starId) AS star_counts ON s.id = star_counts.starId ");
                 queryBuilder.append("WHERE 1=1 ");
 
                 if (year != null && !year.isEmpty()) {
@@ -283,8 +285,8 @@ public class MovieList extends HttpServlet {
                     queryBuilder.append("AND m.title LIKE '%").append(title).append("%' ");
                 }
 
-                queryBuilder.append(orderClause);
                 queryBuilder.append("GROUP BY m.id, m.title, m.year, m.director ");
+                queryBuilder.append(orderClause);
                 queryBuilder.append("LIMIT ").append(page_size).append(" OFFSET ").append(offset);
                 query = queryBuilder.toString();
                 System.out.println(query);
