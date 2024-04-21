@@ -58,7 +58,6 @@ public class SingleStar extends HttpServlet {
                     "FROM stars_in_movies sim " +
                     "JOIN stars s ON sim.starId = s.id " +
                     "WHERE s.name = ? AND sim.movieId = ?";
-
             // Declare our statement
             PreparedStatement statement = conn.prepareStatement(query);
 
@@ -80,7 +79,8 @@ public class SingleStar extends HttpServlet {
                         "FROM stars s " +
                         "LEFT JOIN stars_in_movies sim ON s.id = sim.starId " +
                         "LEFT JOIN movies m ON sim.movieId = m.id " +
-                        "WHERE s.id = ?";
+                        "WHERE s.id = ? " +
+                        "ORDER BY m.year DESC, m.title ASC";
 
                 PreparedStatement statement2 = conn.prepareStatement(query2);
                 statement2.setString(1, starId);

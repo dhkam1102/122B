@@ -60,8 +60,14 @@ function handleResult(resultData) {
         rowHTML += "<th>" + resultData[i]["movie_title"] + "</th>";
         rowHTML += "<th>" + resultData[i]["movie_year"] + "</th>";
         rowHTML += "<th>" + resultData[i]["movie_director"] + "</th>";
-        rowHTML += "<th>" + resultData[i]["movie_genres"] + "</th>"
 
+        let genre_list = resultData[i]["movie_genres"].split(", ");
+        let genre_html = "";
+
+        for (let genre of genre_list) {
+            genre_html += '<a href="movie-list.html?name=&title=&year=&director=&genre=' + encodeURIComponent(genre) + '&letter=&ts=ASC1&rs=DESC2&size=25&page=1">' + genre + '</a>, ';
+        }
+        rowHTML += "<th>" + genre_html + "</th>"
         // rowHTML += "<th>" + resultData[i]["movie_stars"] + "</th>";
         let star_list = resultData[i]["movie_stars"].split(", ");
         let star_html = "";

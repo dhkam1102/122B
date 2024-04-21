@@ -58,7 +58,7 @@ public class SingleMovie extends HttpServlet {
                     "    m.year, " +
                     "    m.director, " +
                     "    GROUP_CONCAT(DISTINCT g.name ORDER BY g.name SEPARATOR ', ') AS genres, " +
-                    "    GROUP_CONCAT(DISTINCT s.name ORDER BY s.name SEPARATOR ', ') AS stars, " +
+                    "    GROUP_CONCAT(DISTINCT s.name ORDER BY star_movie_count DESC, s.name SEPARATOR ', ') AS stars, " +
                     "    ROUND(AVG(r.rating), 1) AS rating " +
                     "FROM " +
                     "    movies m " +
@@ -72,6 +72,8 @@ public class SingleMovie extends HttpServlet {
                     "    stars s ON sim.starId = s.id " +
                     "LEFT JOIN " +
                     "    ratings r ON m.id = r.movieId " +
+                    "LEFT JOIN " +
+                    "    (SELECT starId, COUNT(DISTINCT movieId) AS star_movie_count FROM stars_in_movies GROUP BY starId) AS star_counts ON s.id = star_counts.starId " +
                     "WHERE " +
                     "    m.id = ? " +
                     "GROUP BY " +
