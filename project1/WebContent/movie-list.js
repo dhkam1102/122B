@@ -76,7 +76,29 @@ function handleStarResult(resultData) {
             "</th>";
         rowHTML += "<th>" + resultData[i]["movie_year"] + "</th>";
         rowHTML += "<th>" + resultData[i]["movie_director"] + "</th>";
-        rowHTML += "<th>" + resultData[i]["movie_genre"] + "</th>";
+
+        rowHTML += "<th>";
+        let genres = resultData[i]["movie_genre"].split(", ");
+        for (let k = 0; k < genres.length; k++){
+            // Get the current URL
+            let currentUrl = window.location.href;
+
+            // Update the 'genre' parameter in the current URL
+            let updatedUrl;
+            if (currentUrl.includes('genre=')) {
+                updatedUrl = currentUrl.replace(/genre=([^&]*)/, 'genre=' + encodeURIComponent(genres[k]));
+            } else {
+                updatedUrl = currentUrl + (currentUrl.includes('?') ? '&' : '?') + 'genre=' + encodeURIComponent(genres[k]);
+            }
+
+            // Create the hyperlink with the updated URL
+            rowHTML += '<a href="' + updatedUrl + '">' + genres[k] + '</a>';
+
+            // Add a comma and space after each genre (except the last one)
+            if (k < genres.length - 1) {
+                rowHTML += ", ";
+            }
+        }
         //rowHTML += "<th>" + resultData[i]["movie_star"] + "</th>";
         rowHTML += "<th>";
         let stars = resultData[i]["movie_star"].split(", ");

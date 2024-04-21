@@ -121,9 +121,24 @@ public class MovieList extends HttpServlet {
                         }
                     }
                 }
+
+//                query = "SELECT COUNT(*) AS row_count, m.id AS movie_id, m.title, m.year, m.director, " +
+//                        "SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT g.name ORDER BY g.name SEPARATOR ', '), ', ', 3) AS genres, " +
+//                        "GROUP_CONCAT(DISTINCT s.name ORDER BY s.name SEPARATOR ', ') AS stars, " +
+//                        "MAX(r.rating) AS rating " +
+//                        "FROM movies m " +
+//                        "JOIN ratings r ON m.id = r.movieId " +
+//                        "JOIN genres_in_movies gim ON m.id = gim.movieId " +
+//                        "JOIN genres g ON gim.genreId = g.id " +
+//                        "JOIN stars_in_movies sim ON m.id = sim.movieId " +
+//                        "JOIN stars s ON sim.starId = s.id " +
+//                        "WHERE m.id IN (SELECT m.id FROM movies m JOIN genres_in_movies gim ON m.id = gim.movieId JOIN genres g ON gim.genreId = g.id WHERE g.name = 'Sport') " +
+//                        "GROUP BY m.id, m.title, m.year, m.director " +
+//                        orderClause +
+//                        " LIMIT " + page_size + " OFFSET " + offset;
                 query = "SELECT COUNT(*) AS row_count, m.id AS movie_id, m.title, m.year, m.director, " +
                         "SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT g.name ORDER BY g.name SEPARATOR ', '), ', ', 3) AS genres, " +
-                        "SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT s.name ORDER BY s.name SEPARATOR ', '), ', ', 3) AS stars, " +
+                        "SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT s.name ORDER BY num_movies_played DESC, s.name SEPARATOR ', '), ', ', 3) AS stars, " +
                         "MAX(r.rating) AS rating " +
                         "FROM movies m " +
                         "JOIN ratings r ON m.id = r.movieId " +
@@ -131,10 +146,11 @@ public class MovieList extends HttpServlet {
                         "JOIN genres g ON gim.genreId = g.id " +
                         "JOIN stars_in_movies sim ON m.id = sim.movieId " +
                         "JOIN stars s ON sim.starId = s.id " +
-                        "WHERE g.name = '" + genre + "' " +
+                        "LEFT JOIN (SELECT s.id AS star_id, COUNT(DISTINCT m2.id) AS num_movies_played FROM stars s JOIN stars_in_movies sim2 ON s.id = sim2.starId JOIN movies m2 ON sim2.movieId = m2.id GROUP BY s.id) AS star_counts ON s.id = star_counts.star_id " +
+                        "WHERE m.id IN (SELECT m.id FROM movies m JOIN genres_in_movies gim ON m.id = gim.movieId JOIN genres g ON gim.genreId = g.id WHERE g.name = '" + genre + "') " +
                         "GROUP BY m.id, m.title, m.year, m.director " +
                         orderClause +
-                        "LIMIT " + page_size + " OFFSET " + offset;
+                        " LIMIT " + page_size + " OFFSET " + offset;
                 System.out.println(query);
 
                 statement = conn.prepareStatement(query);
@@ -290,7 +306,8 @@ public class MovieList extends HttpServlet {
                 String movie_genre = rs.getString("genres");
                 String movie_star = rs.getString("stars");
                 String movie_rating = rs.getString("rating");
-
+                System.out.println(movie_star);
+                System.out.println(movie_genre);
                 // Create a JsonObject based on the data we retrieve from rs
                 JsonObject jsonObject = new JsonObject();
                 jsonObject.addProperty("movie_id", movie_id);
