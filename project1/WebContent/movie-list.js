@@ -87,6 +87,7 @@ function handleStarResult(resultData) {
             let updatedUrl;
             if (currentUrl.includes('genre=')) {
                 updatedUrl = currentUrl.replace(/genre=([^&]*)/, 'genre=' + encodeURIComponent(genres[k]));
+                updatedUrl = updatedUrl.replace(/page=([^&]*)/, `page=1`);
             } else {
                 updatedUrl = currentUrl + (currentUrl.includes('?') ? '&' : '?') + 'genre=' + encodeURIComponent(genres[k]);
             }
