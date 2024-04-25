@@ -1,10 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Page</title>
 </head>
 <body>
-$END$
+<h1>Payment Details</h1>
+<div>
+    <h2>Total Price: $<span id="total-price">0</span></h2>
+</div>
+
+<form id="paymentForm" action="#" method="POST">
+    <div>
+        <label for="firstName">First Name:</label>
+        <input type="text" id="firstName" name="firstName" required>
+    </div>
+
+    <div>
+        <label for="lastName">Last Name:</label>
+        <input type="text" id="lastName" name="lastName" required>
+    </div>
+
+    <div>
+        <label for="cardNumber">Credit Card Number:</label>
+        <input type="text" id="cardNumber" name="cardNumber" required>
+    </div>
+
+    <div>
+        <label for="expDate">Expiration Date:</label>
+        <input type="text" id="expDate" name="expDate (ex: 2005-09-01)" required>
+    </div>
+
+    <div>
+        <input type="submit" value="Place Order">
+    </div>
+</form>
+
+<!-- Load jQuery and Bootstrap JS -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+<!-- Load our own JS file -->
+<script src="payment.js"></script>
+
 </body>
 </html>

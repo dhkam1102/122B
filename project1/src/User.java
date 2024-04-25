@@ -10,6 +10,8 @@ public class User {
     private final String ccId;
     private final String address;
     private final String email;
+//    private final String expDate;
+
 
     public User(String id, String firstName, String lastName, String ccId, String address, String email) {
         this.id = id;
@@ -18,8 +20,11 @@ public class User {
         this.ccId = ccId;
         this.address = address;
         this.email = email;
+//        this.expDate = expDate;
     }
-
+//    public String getExpDate() {
+//        return expDate;
+//    }
     public String getId() {
         return id;
     }
