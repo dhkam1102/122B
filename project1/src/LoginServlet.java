@@ -39,21 +39,16 @@ public class LoginServlet extends HttpServlet {
 
 
         try (Connection conn = dataSource.getConnection()) {
-            System.out.println("hello");
             String email_query = "SELECT email FROM customers WHERE email = ?";
             PreparedStatement email_statement = conn.prepareStatement(email_query);
             email_statement.setString(1, email);
             ResultSet email_result = email_statement.executeQuery();
 
             if (!email_result.next()) {
-                System.out.println("hello1");
-
                 responseJsonObject.addProperty("status", "fail");
                 responseJsonObject.addProperty("message", "Email: " + email + " not found.");
-
             }
             else {
-                System.out.println("hello2");
                 String query = "SELECT id, firstName, lastName, ccId, address, email " +
                         "FROM customers " +
                         "WHERE email = ? AND password = ?";
@@ -64,8 +59,6 @@ public class LoginServlet extends HttpServlet {
                 ResultSet rs = statement.executeQuery();
 
                 if(rs.next()) {
-                    System.out.println("hello3");
-
                     String id = rs.getString("id");
                     String first_name = rs.getString("firstName");
                     String last_name = rs.getString("lastName");
@@ -79,11 +72,8 @@ public class LoginServlet extends HttpServlet {
 
                 }
                 else {
-                    System.out.println("hello4");
-
                     responseJsonObject.addProperty("status", "fail");
                     responseJsonObject.addProperty("message", "Password is incorrect.");
-
                 }
             }
 

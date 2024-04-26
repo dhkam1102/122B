@@ -55,6 +55,43 @@ function changeSorting(selectElement) {
     window.location.search = urlParams.toString();
 }
 
+document.addEventListener('DOMContentLoaded', function() {
+    let prevBtn = document.getElementById('prevBtn');
+    let nextBtn = document.getElementById('nextBtn');
+
+    // Get the current URL
+    let currentUrl = window.location.href;
+
+    // Add event listeners to the buttons
+    prevBtn.addEventListener('click', function(event) {
+        event.preventDefault();
+        let currentPage = getQueryParam('page');
+        if (currentPage > 1) {
+            let prevPage = currentPage - 1;
+            window.location.href = updateQueryParam(currentUrl, 'page', prevPage);
+        }
+    });
+
+    nextBtn.addEventListener('click', function(event) {
+        event.preventDefault();
+        let nextPage = getQueryParam('page') + 1;
+        window.location.href = updateQueryParam(currentUrl, 'page', nextPage);
+    });
+
+    // Function to get query parameter value
+    function getQueryParam(name) {
+        let params = new URLSearchParams(window.location.search);
+        return parseInt(params.get(name)) || 1;
+    }
+
+    // Function to update query parameter value
+    function updateQueryParam(url, key, value) {
+        let urlObj = new URL(url);
+        urlObj.searchParams.set(key, value);
+        return urlObj.toString();
+    }
+});
+
 function handleStarResult(resultData) {
     console.log("handleStarResult: populating star table from resultData");
 
@@ -139,30 +176,7 @@ let ts = getParameterByName('ts');
 let rs = getParameterByName('rs');
 let size = getParameterByName('size');
 let page = getParameterByName('page');
-// let url_form = "api/movie-list?";
-// if (name) {
-//     url_form += "name=" + name + "&";
-// }
-// if (title) {
-//     url_form += "title=" + title + "&";
-// }
-// if (year) {
-//     url_form += "year=" + year + "&";
-// }
-// if (director) {
-//     url_form += "director=" + director + "&";
-// }
-// if (genre) {
-//     url_form += "genre=" + genre + "&";
-// }
-// if (letter) {
-//     url_form += "letter=" + letter + "&";
-// }
-//
-// // Remove the trailing "&" if there are any parameters
-// if (url_form.endsWith("&")) {
-//     url_form = url_form.slice(0, -1);
-// }
+
 // Makes the HTTP GET request and registers on success callback function handleStarResult
 
 

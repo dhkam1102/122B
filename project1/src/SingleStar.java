@@ -8,6 +8,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -132,5 +134,15 @@ public class SingleStar extends HttpServlet {
 
     }
 
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        // Get the URL stored in the session
+        HttpSession session = request.getSession();
+        String storedUrl = (String) session.getAttribute("currentURL");
+
+        // Return the stored URL in the response
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write("{\"redirectUrl\": \"" + storedUrl + "\"}");
+    }
 }
 

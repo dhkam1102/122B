@@ -31,6 +31,17 @@ function getParameterByName(target) {
     return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
+$("#redirectButton").click(function() {
+    $.ajax({
+        dataType: "json",
+        method: "POST",
+        url: "api/single-movie",
+        success: function(response) {
+            window.location.href = response.redirectUrl;
+        }
+    });
+});
+
 /**
  * Handles the data returned by the API, read the jsonObject and populate data into html elements
  * @param resultData jsonObject
@@ -59,15 +70,9 @@ function handleResult(resultData) {
         let rowHTML = "";
         rowHTML += "<tr>";
         rowHTML += "<th>";
-        // let movies = resultData[i]["movies"].split(", ");
-        // for (let j = 0; j < movies.length; j++) {
         rowHTML += '<a href="single-movie.html?id=' + resultData[i]["movie_id2"] + '">' + resultData[i]["movie_title"] + '</a>';
 
         // Add a comma and space after each star (except the last one)
-        //     if (j < movies.length - 1) {
-        //         rowHTML += ", ";
-        //     }
-        // }
         rowHTML += "</th>";
         rowHTML += "</tr>";
 

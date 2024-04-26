@@ -8,6 +8,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -64,17 +66,12 @@ public class MovieList extends HttpServlet {
         int page = Integer.parseInt(page_number);
         int offset = (page - 1) * size;
 
-        System.out.println("name parameter: " + name);
-        System.out.println("title parameter: " + title);
-        System.out.println("year parameter: " + year);
-        System.out.println("director parameter: " + director);
-        System.out.println("genre parameter: " + genre);
-        System.out.println("title_sorting parameter: " + title_sorting);
-        System.out.println("rating_sorting parameter: " + rating_sorting);
-        System.out.println("page_size parameter: " + page_size);
-        System.out.println("page_number parameter: " + page_number);
         // Output stream to STDOUT
         PrintWriter out = response.getWriter();
+
+        HttpSession session = request.getSession();
+        String currentURL = "movie-list.html?" + request.getQueryString();
+        session.setAttribute("currentURL", currentURL);
 
         // Get a connection from dataSource and let resource manager close the connection after usage.
         try (Connection conn = dataSource.getConnection()) {
@@ -83,8 +80,6 @@ public class MovieList extends HttpServlet {
             String orderClause = "";
             PreparedStatement statement = null;
             if (!genre.isEmpty() && first_letter.isEmpty()){
-                System.out.println("genre selected");
-
                 if (title_sorting.equals("ASC1") || title_sorting.equals("DESC1")){
                     if (rating_sorting.equals("ASC2")){
                         if(title_sorting.equals("ASC1")){
@@ -122,20 +117,6 @@ public class MovieList extends HttpServlet {
                     }
                 }
 
-//                query = "SELECT COUNT(*) AS row_count, m.id AS movie_id, m.title, m.year, m.director, " +
-//                        "SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT g.name ORDER BY g.name SEPARATOR ', '), ', ', 3) AS genres, " +
-//                        "GROUP_CONCAT(DISTINCT s.name ORDER BY s.name SEPARATOR ', ') AS stars, " +
-//                        "MAX(r.rating) AS rating " +
-//                        "FROM movies m " +
-//                        "JOIN ratings r ON m.id = r.movieId " +
-//                        "JOIN genres_in_movies gim ON m.id = gim.movieId " +
-//                        "JOIN genres g ON gim.genreId = g.id " +
-//                        "JOIN stars_in_movies sim ON m.id = sim.movieId " +
-//                        "JOIN stars s ON sim.starId = s.id " +
-//                        "WHERE m.id IN (SELECT m.id FROM movies m JOIN genres_in_movies gim ON m.id = gim.movieId JOIN genres g ON gim.genreId = g.id WHERE g.name = 'Sport') " +
-//                        "GROUP BY m.id, m.title, m.year, m.director " +
-//                        orderClause +
-//                        " LIMIT " + page_size + " OFFSET " + offset;
                 query = "SELECT COUNT(*) AS row_count, m.id AS movie_id, m.title, m.year, m.director, " +
                         "SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT g.name ORDER BY g.name SEPARATOR ', '), ', ', 3) AS genres, " +
                         "SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT s.name ORDER BY num_movies_played DESC, s.name SEPARATOR ', '), ', ', 3) AS stars, " +
@@ -151,8 +132,6 @@ public class MovieList extends HttpServlet {
                         "GROUP BY m.id, m.title, m.year, m.director " +
                         orderClause +
                         " LIMIT " + page_size + " OFFSET " + offset;
-                System.out.println(query);
-
                 statement = conn.prepareStatement(query);
             } else if (genre.isEmpty() && !first_letter.isEmpty()) {
                 String whereClause;
@@ -217,7 +196,6 @@ public class MovieList extends HttpServlet {
                         "LIMIT " + page_size + " OFFSET " + offset;
 
                 statement = conn.prepareStatement(query);
-//                statement.setString(1, first_letter);
             } else if (genre.isEmpty() && first_letter.isEmpty()) {
 
                 if (title_sorting.equals("ASC1") || title_sorting.equals("DESC1")){
@@ -256,8 +234,6 @@ public class MovieList extends HttpServlet {
                         }
                     }
                 }
-
-                System.out.println("search selected");
                 StringBuilder queryBuilder = new StringBuilder();
                 queryBuilder.append("SELECT COUNT(*) AS row_count, m.id AS movie_id, m.title, m.year, m.director, ");
                 queryBuilder.append("SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT g.name ORDER BY g.name SEPARATOR ', '), ', ', 3) AS genres, ");
@@ -289,8 +265,6 @@ public class MovieList extends HttpServlet {
                 queryBuilder.append(orderClause);
                 queryBuilder.append("LIMIT ").append(page_size).append(" OFFSET ").append(offset);
                 query = queryBuilder.toString();
-                System.out.println(query);
-
                 statement = conn.prepareStatement(query);
             }
             // Perform the query
@@ -308,8 +282,6 @@ public class MovieList extends HttpServlet {
                 String movie_genre = rs.getString("genres");
                 String movie_star = rs.getString("stars");
                 String movie_rating = rs.getString("rating");
-                System.out.println(movie_star);
-                System.out.println(movie_genre);
                 // Create a JsonObject based on the data we retrieve from rs
                 JsonObject jsonObject = new JsonObject();
                 jsonObject.addProperty("movie_id", movie_id);
