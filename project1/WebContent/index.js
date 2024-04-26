@@ -48,7 +48,7 @@ function handleStarResult(resultData) {
 
     // Iterate through each character and add a hyperlink to it in the row
     for (let char of characters) {
-        specialCharsRow += "<a href='movie-list.html?name=&title=&year=&director=&genre=&letter=" + encodeURIComponent(char) + "&ts=ASC1&rs=DESC2&size=25&page=1'>" + char + "</a>";
+        specialCharsRow += "<a href='movie-list.html?name=&title=&year=&director=&genre=&letter=" + encodeURIComponent(char) + "&ts=ASC1&rs=DESC2&size=25&page=1'>" + " " + char + " " + "</a>";
     }
 
     specialCharsRow += "</td></tr>";

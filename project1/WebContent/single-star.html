@@ -1,47 +1,143 @@
-<!-- This example is following frontend and backend separation.
+<!--&lt;!&ndash; This example is following frontend and backend separation.-->
 
-    This .html performs two steps:
-    1. Create a html template skeleton, with all the elements defined (some left empty) and named with ids.
-    2. Load single-movie.js to populate the data into empty elements.
-    -->
+<!--    This .html performs two steps:-->
+<!--    1. Create a html template skeleton, with all the elements defined (some left empty) and named with ids.-->
+<!--    2. Load single-movie.js to populate the data into empty elements.-->
+<!--    &ndash;&gt;-->
 
-<!doctype html>
+<!--<!doctype html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--    &lt;!&ndash; Required meta tags &ndash;&gt;-->
+<!--    <meta charset="utf-8">-->
+<!--    <meta name="viewport"-->
+<!--          content="width=device-width, initial-scale=1, shrink-to-fit=no">-->
+
+<!--    &lt;!&ndash; Bootstrap CSS &ndash;&gt;-->
+<!--    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"-->
+<!--          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">-->
+
+<!--    <title>Single Star</title>-->
+<!--</head>-->
+<!--<body>-->
+<!--<h1>Single Star Page</h1>-->
+
+<!--<button type="button" onclick="window.location.href='index.html'">Search Home</button>-->
+<!--<button id="redirectButton">Movie List</button>-->
+
+
+
+
+<!--&lt;!&ndash; H3 body is left empty here, will be populated with the data retrieved with single-movie.js &ndash;&gt;-->
+<!--&lt;!&ndash; single-movie.js will find this html element by it's id "star_info" &ndash;&gt;-->
+<!--<h3 id="star_info"></h3>-->
+<!--<table id=movie_table class="table table-striped">-->
+<!--    <thead>-->
+<!--    <tr>-->
+<!--        <th>Movie Title</th>-->
+<!--        <th>-->
+<!--    </tr>-->
+<!--    </thead>-->
+
+<!--    &lt;!&ndash; Table body is left empty here, will be populated with the data retrieved with single-movie.js &ndash;&gt;-->
+<!--    &lt;!&ndash; single-movie.js will find this html element by it's id "movie_table_body" &ndash;&gt;-->
+<!--    <tbody id=movie_table_body></tbody>-->
+<!--</table>-->
+
+<!--&lt;!&ndash; Load jQuery and Bootstrap JS &ndash;&gt;-->
+<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>-->
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>-->
+<!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>-->
+
+<!--&lt;!&ndash; Load our own JS file &ndash;&gt;-->
+<!--&lt;!&ndash; The path is relative to single-movie.html, since these two files are in the same directory &ndash;&gt;-->
+<!--&lt;!&ndash; Note the url does not contain a "/" in the beginning, which means the url is relative to current path-->
+<!--     otherwise the url is relative to the root path&ndash;&gt;-->
+<!--<script src="single-star.js"></script>-->
+<!--</body>-->
+
+
+<!--</html>-->
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Single Star Page</title>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
-    <title>Single Star</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        button {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        table {
+            margin: 0 auto;
+            width: 80%;
+            margin-top: 20px;
+        }
+
+        th, td {
+            text-align: center;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        /* Bold styling for star name and date of birth */
+        #star_info strong {
+            font-weight: bold;
+            margin-right: 5px; /* Add some space between the bold text and the content */
+        }
+    </style>
 </head>
 <body>
 <h1>Single Star Page</h1>
 
-<button type="button" onclick="window.location.href='index.html'">Search Home</button>
-<button id="redirectButton">Movie List</button>
+<button type="button" onclick="window.location.href='index.html'" class="btn btn-primary">Search Home</button>
+<button id="redirectButton" class="btn btn-primary">Movie List</button>
 
-
-
-
-<!-- H3 body is left empty here, will be populated with the data retrieved with single-movie.js -->
-<!-- single-movie.js will find this html element by it's id "star_info" -->
+<!-- Use strong tag to make star name and date of birth bold -->
 <h3 id="star_info"></h3>
-<table id=movie_table class="table table-striped">
+<table id="movie_table" class="table table-striped">
     <thead>
     <tr>
         <th>Movie Title</th>
-        <th>
     </tr>
     </thead>
-
-    <!-- Table body is left empty here, will be populated with the data retrieved with single-movie.js -->
-    <!-- single-movie.js will find this html element by it's id "movie_table_body" -->
-    <tbody id=movie_table_body></tbody>
+    <tbody id="movie_table_body"></tbody>
 </table>
 
 <!-- Load jQuery and Bootstrap JS -->
@@ -49,12 +145,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 
-<!-- Load our own JS file -->
-<!-- The path is relative to single-movie.html, since these two files are in the same directory -->
-<!-- Note the url does not contain a "/" in the beginning, which means the url is relative to current path
-     otherwise the url is relative to the root path-->
+<!-- Load your own JS file -->
 <script src="single-star.js"></script>
 </body>
-
-
 </html>
