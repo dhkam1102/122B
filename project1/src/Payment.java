@@ -88,13 +88,10 @@ public class Payment extends HttpServlet {
             }
             else {
                 try(Connection conn = dataSource.getConnection()) {
-                    String movie_query = "SELECT id " +
-                            "FROM movies " +
-                            "WHERE title = ?";
+                    String movie_query = "SELECT id FROM movies WHERE title = ?";
                     PreparedStatement movie_statement = conn.prepareStatement(movie_query);
 //                    PreparedStatement movie_statement = conn.prepareStatement("SELECT id FROM movies WHERE title = ?");
-
-                    PreparedStatement sales_statement = conn.prepareStatement("INSERT INTO sales (customer_id, movie_id, sale_date) VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+                    PreparedStatement sales_statement = conn.prepareStatement("INSERT INTO sales (customerId, movieId, saleDate) VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
                     System.out.println("heheheh");
 
                     LocalDate saleDate = LocalDate.now();
@@ -108,27 +105,33 @@ public class Payment extends HttpServlet {
                                 System.out.println("helloooo");
 
                                 String movie_id = rs.getString("id");
-                                System.out.println(movie_id);
+                                System.out.println("movie_id: " + movie_id);
+                                System.out.println("sale Date:" + saleDate);
+                                System.out.println("customerId: "+ customer_id);
 
                                 System.out.println("hellooo23232o");
 
                                 sales_statement.setString(1, customer_id);
                                 sales_statement.setString(2, movie_id);
                                 sales_statement.setDate(3, Date.valueOf(saleDate));
-                                sales_statement.executeUpdate();
+                                System.out.println("hellooohjehehe");
+
+                                int rows_updated = sales_statement.executeUpdate();
+                                System.out.println("rows_updated");
+                                System.out.println(rows_updated);
                             }
                             else {
                                 System.out.println("he2");
-
                                 jsonResponse.addProperty("status", "fail");
                                 jsonResponse.addProperty("message", "fail");
                             }
                         }
 //                        System.out.println(movie_id);
                         System.out.println("helloooo222");
-
-
                     }
+                    conn.commit();
+                    jsonResponse.addProperty("status", "success");
+                    jsonResponse.addProperty("message", "success");
                 }
                 catch (Exception e) {
                     System.out.println("he3");
