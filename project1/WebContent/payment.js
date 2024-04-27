@@ -18,16 +18,17 @@ function handlePaymentResult(resultDataJson) {
     console.log(resultDataJson["status"]);
 
     if (resultDataJson["status"] === "success") {
-        alert("Payment was successful!");
+        window.location.replace("confirmation.html")
+        // alert("Payment was successful!");
     }
     else {
         alert("Payment failed");
     }
 }
 
-function submitPaymentForm(payment_form) {
+function submitPaymentForm(formSubmitEvent) {
     console.log("submit payment form");
-    payment_form.preventDefault();
+    formSubmitEvent.preventDefault();
 
     $.ajax(
         "api/payment", {
@@ -39,10 +40,8 @@ function submitPaymentForm(payment_form) {
     );
 }
 
-payment_form.on("submit", function(event) {
-    event.preventDefault();
-    submitPaymentForm();
-});
+payment_form.on("submit", submitPaymentForm);
+
 
 /**
  * Once this .js is loaded, following scripts will be executed by the browser
@@ -53,5 +52,6 @@ jQuery.ajax({
     dataType: "json", // Setting return data type
     method: "GET", // Setting request method
     url: "api/payment", // Setting request url, which is mapped by StarsServlet in Stars.java
+    // success: handlePaymentResult
     success: (resultData) => handleTotalPriceResult(resultData) // Setting callback function to handle data returned successfully by the StarsServlet
 });

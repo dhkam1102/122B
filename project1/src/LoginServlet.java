@@ -54,9 +54,10 @@ public class LoginServlet extends HttpServlet {
             }
             else {
                 System.out.println("hello2");
-                String query = "SELECT id, firstName, lastName, ccId, address, email " +
-                        "FROM customers " +
-                        "WHERE email = ? AND password = ?";
+                String query = "SELECT c.id, c.firstName, c.lastName, c.ccId, c.address, c.email, cc.expiration " +
+                        "FROM customers c " +
+                        "JOIN creditcards cc ON c.ccId = cc.id " +
+                        "WHERE c.email = ? AND c.password = ?";
 
                 PreparedStatement statement = conn.prepareStatement(query);
                 statement.setString(1, email);
@@ -71,8 +72,9 @@ public class LoginServlet extends HttpServlet {
                     String last_name = rs.getString("lastName");
                     String cc_id = rs.getString("ccId");
                     String address = rs.getString("address");
+                    String expiration_date = rs.getString("expiration");
 
-                    request.getSession().setAttribute("user", new User(id, first_name, last_name, cc_id, address, email));
+                    request.getSession().setAttribute("user", new User(id, first_name, last_name, cc_id, address, email, expiration_date));
 
                     responseJsonObject.addProperty("status", "success");
                     responseJsonObject.addProperty("message", "success");
