@@ -35,7 +35,7 @@ $("#redirectButton").click(function() {
     $.ajax({
         dataType: "json",
         method: "POST",
-        url: "api/single-movie",
+        url: "api/movie-list",
         success: function(response) {
             window.location.href = response.redirectUrl;
         }

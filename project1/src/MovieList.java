@@ -321,4 +321,15 @@ public class MovieList extends HttpServlet {
         // Always remember to close db connection after usage. Here it's done by try-with-resources
 
     }
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        // Get the URL stored in the session
+        HttpSession session = request.getSession();
+        String storedUrl = (String) session.getAttribute("currentURL");
+
+        // Return the stored URL in the response
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write("{\"redirectUrl\": \"" + storedUrl + "\"}");
+    }
 }
