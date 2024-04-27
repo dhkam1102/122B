@@ -19,28 +19,31 @@ function handleShoppingResult(resultData) {
     let starTableBodyElement = jQuery("#cart-table-body");
     let totalPrice = 0;
     // Iterate through resultData, no more than 10 entries
-    for (let i = 0; i < resultData.length; i++) {
-
-        let singleMovieTotalPrice = parseFloat(resultData[i]["price"].substring(1)) * resultData[i]["quantity"];
-        totalPrice += singleMovieTotalPrice;
+    for (let i = 0; i < resultData.cart_items.length; i++) {
+        let item = resultData.cart_items[i];
+        let singleMovieTotalPrice = item["price"] * item["quantity"];
+        // totalPrice += singleMovieTotalPrice;
 
         // Concatenate the html tags with resultData jsonObject
         let rowHTML = "";
         rowHTML += "<tr>";
-        rowHTML += "<th>" + resultData[i]["movie_title"] + "</th>";
-        rowHTML += "<th>" + resultData[i]["quantity"] + "</th>";
-        rowHTML += "<th>" + resultData[i]["price"] + "</th>";
+        rowHTML += "<th>" + item["movie_title"] + "</th>";
+        rowHTML += "<th>" + item["quantity"] + "</th>";
+        rowHTML += "<th>" + item["price"] + "</th>";
         rowHTML += "<th>" + singleMovieTotalPrice + "</th>";
         rowHTML += "<td>";
-        rowHTML += "<button onclick='updateQuantity(\"" + resultData[i]["movie_title"] + "\", \"add\")'>+</button>";
-        rowHTML += "<button onclick='updateQuantity(\"" + resultData[i]["movie_title"] + "\", \"sub\")'>-</button>";
-        rowHTML += "<button onclick='updateQuantity(\"" + resultData[i]["movie_title"] + "\", \"delete\")'>remove</button>";
+        rowHTML += "<button onclick='updateQuantity(\"" + item["movie_title"] + "\", \"add\")'>+</button>";
+        rowHTML += "<button onclick='updateQuantity(\"" + item["movie_title"] + "\", \"sub\")'>-</button>";
+        rowHTML += "<button onclick='updateQuantity(\"" + item["movie_title"] + "\", \"delete\")'>remove</button>";
         rowHTML += "</td>";
         rowHTML += "</tr>";
 
         // Append the row created to the table body, which will refresh the page
         starTableBodyElement.append(rowHTML);
     }
+
+
+    document.getElementById("total-price").innerText = resultData.total_price;
 
 
 }

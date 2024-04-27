@@ -42,6 +42,20 @@ public class ShoppingCart extends HttpServlet {
      */
 
 
+    public static int getMoviePrice(String movieTitle) {
+        int price = 0;
+        movieTitle = movieTitle.toLowerCase();
+        for (int i = 0; i < movieTitle.length(); i++) {
+            //calc the price by adding the ascii number of each letter
+            price += (int) movieTitle.charAt(i);
+        }
+        //make the price fall around 20
+        price = (price % 20) + 1;
+        return price;
+    }
+
+
+
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         response.setContentType("application/json");
@@ -56,18 +70,27 @@ public class ShoppingCart extends HttpServlet {
             session.setAttribute("cart", cart);
         }
 
+        int totalPrice = 0;
+
         JsonArray jsonArray = new JsonArray();
         for (String movie_title: cart.keySet()) {
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("movie_title", movie_title);
             jsonObject.addProperty("quantity", cart.get(movie_title));
-            jsonObject.addProperty("price", "$10");
+            int movie_price = getMoviePrice(movie_title);
+            jsonObject.addProperty("price", movie_price);
+            totalPrice += movie_price;
             jsonArray.add(jsonObject);
         }
 
+        session.setAttribute("totalPrice", totalPrice);
+        JsonObject responseObject = new JsonObject();
+        responseObject.addProperty("total_price", totalPrice);
+        responseObject.add("cart_items", jsonArray);
+
         request.getServletContext().log("getting " + jsonArray.size() + " results");
 
-        out.write(jsonArray.toString());
+        out.write(responseObject.toString());
         response.setStatus(200);
         out.close();
 
