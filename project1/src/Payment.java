@@ -59,7 +59,6 @@ public class Payment extends HttpServlet {
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        System.out.println("he1");
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
         HttpSession session = request.getSession();
@@ -77,12 +76,9 @@ public class Payment extends HttpServlet {
         if (user != null && user.getFirstName().equals(first_name) && user.getLastName().equals(last_name)
                 && user.getCcId().equals(ccId) && user.getExpDate().equals(expDate)) {
 
-
             HashMap<String, Integer> cart = (HashMap<String, Integer>) session.getAttribute("cart");
 
             if (cart == null) {
-                System.out.println("he1");
-
                 jsonResponse.addProperty("status", "fail");
                 jsonResponse.addProperty("message", "fail");
             }
@@ -90,52 +86,40 @@ public class Payment extends HttpServlet {
                 try(Connection conn = dataSource.getConnection()) {
                     String movie_query = "SELECT id FROM movies WHERE title = ?";
                     PreparedStatement movie_statement = conn.prepareStatement(movie_query);
-//                    PreparedStatement movie_statement = conn.prepareStatement("SELECT id FROM movies WHERE title = ?");
                     PreparedStatement sales_statement = conn.prepareStatement("INSERT INTO sales (customerId, movieId, saleDate) VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
-                    System.out.println("heheheh");
 
                     LocalDate saleDate = LocalDate.now();
-//                        conn.setAutoCommit(false);
                     for (String movie_title: cart.keySet()) {
                         System.out.println(movie_title);
 
                         movie_statement.setString(1, movie_title);
                         try(ResultSet rs = movie_statement.executeQuery()) {
-                            if(rs.next()) {
-                                System.out.println("helloooo");
-
+                            if(rs.next())
+                            {
                                 String movie_id = rs.getString("id");
-                                System.out.println("movie_id: " + movie_id);
-                                System.out.println("sale Date:" + saleDate);
-                                System.out.println("customerId: "+ customer_id);
-
-                                System.out.println("hellooo23232o");
+//                                System.out.println("movie_id: " + movie_id);
+//                                System.out.println("sale Date:" + saleDate);
+//                                System.out.println("customerId: "+ customer_id);
 
                                 sales_statement.setString(1, customer_id);
                                 sales_statement.setString(2, movie_id);
                                 sales_statement.setDate(3, Date.valueOf(saleDate));
-                                System.out.println("hellooohjehehe");
 
                                 int rows_updated = sales_statement.executeUpdate();
-                                System.out.println("rows_updated");
-                                System.out.println(rows_updated);
+                                jsonResponse.addProperty("status", "success");
+                                jsonResponse.addProperty("message", "success");
                             }
-                            else {
-                                System.out.println("he2");
+                            else
+                            {
                                 jsonResponse.addProperty("status", "fail");
                                 jsonResponse.addProperty("message", "fail");
                             }
                         }
-//                        System.out.println(movie_id);
-                        System.out.println("helloooo222");
                     }
-                    conn.commit();
-                    jsonResponse.addProperty("status", "success");
-                    jsonResponse.addProperty("message", "success");
+//                    jsonResponse.addProperty("status", "success");
+//                    jsonResponse.addProperty("message", "success");
                 }
                 catch (Exception e) {
-                    System.out.println("he3");
-
                     jsonResponse.addProperty("status", "fail");
                     jsonResponse.addProperty("message", "fail");
                     response.setStatus(500);
@@ -147,13 +131,9 @@ public class Payment extends HttpServlet {
 
         }
         else {
-            System.out.println("he4");
-
             jsonResponse.addProperty("status", "fail");
             jsonResponse.addProperty("message", "fail");
         }
-
-
 
         out.println(jsonResponse.toString());
         out.close();
