@@ -79,7 +79,7 @@ public class ShoppingCart extends HttpServlet {
             jsonObject.addProperty("quantity", cart.get(movie_title));
             int movie_price = getMoviePrice(movie_title);
             jsonObject.addProperty("price", movie_price);
-            totalPrice += movie_price;
+            totalPrice += movie_price * cart.get(movie_title);
             jsonArray.add(jsonObject);
         }
 
