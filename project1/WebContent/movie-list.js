@@ -13,6 +13,8 @@
  * Handles the data returned by the API, read the jsonObject and populate data into html elements
  * @param target
  */
+
+let max_page = -1;
 function getParameterByName(target) {
     // Get request URL
     let url = window.location.href;
@@ -74,7 +76,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     nextBtn.addEventListener('click', function(event) {
         event.preventDefault();
-        let nextPage = getQueryParam('page') + 1;
+        let current_page = getQueryParam('page');
+        let nextPage = current_page + 1;
         window.location.href = updateQueryParam(currentUrl, 'page', nextPage);
     });
 
@@ -98,9 +101,22 @@ function handleStarResult(resultData) {
     // Populate the star table
     // Find the empty table body by id "star_table_body"
     let starTableBodyElement = jQuery("#star_table_body");
+
+    if (resultData.length === 0) {
+        let currentURL = new URL(window.location.href);
+        let currentPage = parseInt(currentURL.searchParams.get('page'));
+        if(currentPage === 1)
+        {
+            currentURL.searchParams.set('page', 1);
+        }
+        else
+        {
+            currentURL.searchParams.set('page', currentPage - 1);
+            window.location.href = currentURL.href;
+        }
+    }
     // Iterate through resultData, no more than 10 entries
     for (let i = 0; i < resultData.length; i++) {
-
         // Concatenate the html tags with resultData jsonObject
         let rowHTML = "";
         rowHTML += "<tr>";

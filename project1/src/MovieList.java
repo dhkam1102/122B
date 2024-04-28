@@ -324,25 +324,30 @@ public class MovieList extends HttpServlet {
 
                 System.out.println("movie id list" + movie_id_list);
 
-                StringBuilder queryBuilder = new StringBuilder();
-                queryBuilder.append("SELECT COUNT(*) AS row_count, m.id AS movie_id, m.title, m.year, m.director, ");
-                queryBuilder.append("SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT g.name ORDER BY g.name SEPARATOR ', '), ', ', 3) AS genres, ");
-                queryBuilder.append("SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT s.name ORDER BY star_counts.movies_played DESC, s.name SEPARATOR ', '), ', ', 3) AS stars, ");
-                queryBuilder.append("MAX(r.rating) AS rating ");
-                queryBuilder.append("FROM movies m ");
-                queryBuilder.append("JOIN ratings r ON m.id = r.movieId ");
-                queryBuilder.append("JOIN genres_in_movies gim ON m.id = gim.movieId ");
-                queryBuilder.append("JOIN genres g ON gim.genreId = g.id ");
-                queryBuilder.append("JOIN stars_in_movies sim ON m.id = sim.movieId ");
-                queryBuilder.append("JOIN stars s ON sim.starId = s.id ");
-                queryBuilder.append("LEFT JOIN (SELECT starId, COUNT(movieId) AS movies_played FROM stars_in_movies GROUP BY starId) AS star_counts ON s.id = star_counts.starId ");
-                queryBuilder.append("WHERE ");
-                queryBuilder.append("m.id IN ").append(movie_id_list);
-                queryBuilder.append(" GROUP BY m.id, m.title, m.year, m.director ");
-                queryBuilder.append(orderClause);
-                queryBuilder.append(" LIMIT ").append(page_size).append(" OFFSET ").append(offset);
-                query = queryBuilder.toString();
-
+                if (!movie_id_list.equals("()")) {
+                    StringBuilder queryBuilder = new StringBuilder();
+                    queryBuilder.append("SELECT COUNT(*) AS row_count, m.id AS movie_id, m.title, m.year, m.director, ");
+                    queryBuilder.append("SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT g.name ORDER BY g.name SEPARATOR ', '), ', ', 3) AS genres, ");
+                    queryBuilder.append("SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT s.name ORDER BY star_counts.movies_played DESC, s.name SEPARATOR ', '), ', ', 3) AS stars, ");
+                    queryBuilder.append("MAX(r.rating) AS rating ");
+                    queryBuilder.append("FROM movies m ");
+                    queryBuilder.append("JOIN ratings r ON m.id = r.movieId ");
+                    queryBuilder.append("JOIN genres_in_movies gim ON m.id = gim.movieId ");
+                    queryBuilder.append("JOIN genres g ON gim.genreId = g.id ");
+                    queryBuilder.append("JOIN stars_in_movies sim ON m.id = sim.movieId ");
+                    queryBuilder.append("JOIN stars s ON sim.starId = s.id ");
+                    queryBuilder.append("LEFT JOIN (SELECT starId, COUNT(movieId) AS movies_played FROM stars_in_movies GROUP BY starId) AS star_counts ON s.id = star_counts.starId ");
+                    queryBuilder.append("WHERE ");
+                    queryBuilder.append("m.id IN ").append(movie_id_list);
+                    queryBuilder.append(" GROUP BY m.id, m.title, m.year, m.director ");
+                    queryBuilder.append(orderClause);
+                    queryBuilder.append(" LIMIT ").append(page_size).append(" OFFSET ").append(offset);
+                    query = queryBuilder.toString();
+                }
+                else
+                {
+                    query = "SELECT * FROM movies WHERE 1=0";
+                }
                 statement = conn.prepareStatement(query);
             }
             // Perform the query
@@ -364,6 +369,7 @@ public class MovieList extends HttpServlet {
                     String movie_rating = rs.getString("rating");
                     // Create a JsonObject based on the data we retrieve from rs
                     JsonObject jsonObject = new JsonObject();
+                    jsonObject.addProperty("row_count", row_count);
                     jsonObject.addProperty("movie_id", movie_id);
                     jsonObject.addProperty("movie_title", movie_title);
                     jsonObject.addProperty("movie_year", movie_year);
