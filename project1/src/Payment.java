@@ -97,15 +97,17 @@ public class Payment extends HttpServlet {
                             if(rs.next())
                             {
                                 String movie_id = rs.getString("id");
+                                for (int i = 0; i < cart.get(movie_title); i++) {
+                                    sales_statement.setString(1, customer_id);
+                                    sales_statement.setString(2, movie_id);
+                                    sales_statement.setDate(3, Date.valueOf(saleDate));
+                                    int rows_updated = sales_statement.executeUpdate();
+                                }
 //                                System.out.println("movie_id: " + movie_id);
 //                                System.out.println("sale Date:" + saleDate);
 //                                System.out.println("customerId: "+ customer_id);
 
-                                sales_statement.setString(1, customer_id);
-                                sales_statement.setString(2, movie_id);
-                                sales_statement.setDate(3, Date.valueOf(saleDate));
 
-                                int rows_updated = sales_statement.executeUpdate();
                                 jsonResponse.addProperty("status", "success");
                                 jsonResponse.addProperty("message", "success");
                             }
