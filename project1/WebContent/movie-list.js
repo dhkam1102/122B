@@ -125,6 +125,11 @@ function handleStarResult(resultData) {
             if (currentUrl.includes('genre=')) {
                 updatedUrl = currentUrl.replace(/genre=([^&]*)/, 'genre=' + encodeURIComponent(genres[k]));
                 updatedUrl = updatedUrl.replace(/page=([^&]*)/, `page=1`);
+                updatedUrl = updatedUrl.replace(/name=([^&]*)/, `name=`);
+                updatedUrl = updatedUrl.replace(/title=([^&]*)/, `title=`);
+                updatedUrl = updatedUrl.replace(/year=([^&]*)/, `year=`);
+                updatedUrl = updatedUrl.replace(/director=([^&]*)/, `director=`);
+                updatedUrl = updatedUrl.replace(/letter=([^&]*)/, `letter=`);
             } else {
                 updatedUrl = currentUrl + (currentUrl.includes('?') ? '&' : '?') + 'genre=' + encodeURIComponent(genres[k]);
             }
