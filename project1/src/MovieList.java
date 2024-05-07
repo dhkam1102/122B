@@ -64,6 +64,58 @@ public class MovieList extends HttpServlet {
         int page = Integer.parseInt(page_number);
         int offset = (page - 1) * size;
 
+        //create order clause
+        String orderClause = "";
+        if (title_sorting.equals("ASC1") || title_sorting.equals("DESC1"))
+        {
+            if (rating_sorting.equals("ASC2"))
+            {
+                if(title_sorting.equals("ASC1"))
+                {
+                    orderClause = "ORDER BY m.title ASC, rating ASC ";
+                }
+                else if (title_sorting.equals("DESC1"))
+                {
+                    orderClause = "ORDER BY m.title DESC, rating ASC ";
+                }
+            }
+            else if (rating_sorting.equals("DESC2"))
+            {
+                if(title_sorting.equals("ASC1"))
+                {
+                    orderClause = "ORDER BY m.title ASC, rating DESC ";
+                }
+                else if (title_sorting.equals("DESC1"))
+                {
+                    orderClause = "ORDER BY m.title DESC, rating DESC ";
+                }
+            }
+        }
+        else if (title_sorting.equals("ASC2") || title_sorting.equals("DESC2"))
+        {
+            if (rating_sorting.equals("ASC1"))
+            {
+                if(title_sorting.equals("ASC2"))
+                {
+                    orderClause = "ORDER BY rating ASC, m.title ASC ";
+                }
+                else if (title_sorting.equals("DESC2"))
+                {
+                    orderClause = "ORDER BY rating ASC, m.title DESC ";
+                }
+            }
+            else if (rating_sorting.equals("DESC1"))
+            {
+                if(title_sorting.equals("ASC2"))
+                {
+                    orderClause = "ORDER BY rating DESC, m.title ASC ";
+                }
+                else if (title_sorting.equals("DESC2"))
+                {
+                    orderClause = "ORDER BY rating DESC, m.title DESC ";
+                }
+            }
+        }
         // Output stream to STDOUT
         PrintWriter out = response.getWriter();
 
@@ -75,61 +127,9 @@ public class MovieList extends HttpServlet {
         try (Connection conn = dataSource.getConnection())
         {
             String query = "";
-            String orderClause = "";
             PreparedStatement statement = null;
             if (!genre.isEmpty() && first_letter.isEmpty())
             {
-                if (title_sorting.equals("ASC1") || title_sorting.equals("DESC1"))
-                {
-                    if (rating_sorting.equals("ASC2"))
-                    {
-                        if(title_sorting.equals("ASC1"))
-                        {
-                            orderClause = "ORDER BY m.title ASC, rating ASC ";
-                        }
-                        else if (title_sorting.equals("DESC1"))
-                        {
-                            orderClause = "ORDER BY m.title DESC, rating ASC ";
-                        }
-                    }
-                    else if (rating_sorting.equals("DESC2"))
-                    {
-                        if(title_sorting.equals("ASC1"))
-                        {
-                            orderClause = "ORDER BY m.title ASC, rating DESC ";
-                        }
-                        else if (title_sorting.equals("DESC1"))
-                        {
-                            orderClause = "ORDER BY m.title DESC, rating DESC ";
-                        }
-                    }
-                }
-                else if (title_sorting.equals("ASC2") || title_sorting.equals("DESC2"))
-                {
-                    if (rating_sorting.equals("ASC1"))
-                    {
-                        if(title_sorting.equals("ASC2"))
-                        {
-                            orderClause = "ORDER BY rating ASC, m.title ASC ";
-                        }
-                        else if (title_sorting.equals("DESC2"))
-                        {
-                            orderClause = "ORDER BY rating ASC, m.title DESC ";
-                        }
-                    }
-                    else if (rating_sorting.equals("DESC1"))
-                    {
-                        if(title_sorting.equals("ASC2"))
-                        {
-                            orderClause = "ORDER BY rating DESC, m.title ASC ";
-                        }
-                        else if (title_sorting.equals("DESC2"))
-                        {
-                            orderClause = "ORDER BY rating DESC, m.title DESC ";
-                        }
-                    }
-                }
-
                 query = "SELECT COUNT(*) AS row_count, m.id AS movie_id, m.title, m.year, m.director, " +
                         "SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT g.name ORDER BY g.name SEPARATOR ', '), ', ', 3) AS genres, " +
                         "SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT s.name ORDER BY num_movies_played DESC, s.name SEPARATOR ', '), ', ', 3) AS stars, " +
@@ -161,56 +161,6 @@ public class MovieList extends HttpServlet {
                     whereClause = "WHERE UPPER(LEFT(m.title, 1)) = '" + first_letter.toUpperCase() + "'";
                 }
 
-                if (title_sorting.equals("ASC1") || title_sorting.equals("DESC1"))
-                {
-                    if (rating_sorting.equals("ASC2"))
-                    {
-                        if(title_sorting.equals("ASC1"))
-                        {
-                            orderClause = "ORDER BY m.title ASC, rating ASC ";
-                        }
-                        else if (title_sorting.equals("DESC1"))
-                        {
-                            orderClause = "ORDER BY m.title DESC, rating ASC ";
-                        }
-                    }
-                    else if (rating_sorting.equals("DESC2"))
-                    {
-                        if(title_sorting.equals("ASC1"))
-                        {
-                            orderClause = "ORDER BY m.title ASC, rating DESC ";
-                        }
-                        else if (title_sorting.equals("DESC1"))
-                        {
-                            orderClause = "ORDER BY m.title DESC, rating DESC ";
-                        }
-                    }
-                }
-                else if (title_sorting.equals("ASC2") || title_sorting.equals("DESC2"))
-                {
-                    if (rating_sorting.equals("ASC1"))
-                    {
-                        if(title_sorting.equals("ASC2"))
-                        {
-                            orderClause = "ORDER BY rating ASC, m.title ASC ";
-                        }
-                        else if (title_sorting.equals("DESC2"))
-                        {
-                            orderClause = "ORDER BY rating ASC, m.title DESC ";
-                        }
-                    }
-                    else if (rating_sorting.equals("DESC1"))
-                    {
-                        if(title_sorting.equals("ASC2"))
-                        {
-                            orderClause = "ORDER BY rating DESC, m.title ASC ";
-                        }
-                        else if (title_sorting.equals("DESC2"))
-                        {
-                            orderClause = "ORDER BY rating DESC, m.title DESC ";
-                        }
-                    }
-                }
                 query = "SELECT COUNT(*) AS row_count, m.id AS movie_id, m.title, m.year, m.director, " +
                         "SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT g.name ORDER BY g.name SEPARATOR ', '), ', ', 3) AS genres, " +
                         "SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT s.name ORDER BY movies_played DESC, s.name SEPARATOR ', '), ', ', 3) AS stars, " +
@@ -231,57 +181,6 @@ public class MovieList extends HttpServlet {
             }
             else if (genre.isEmpty() && first_letter.isEmpty())
             {
-                if (title_sorting.equals("ASC1") || title_sorting.equals("DESC1"))
-                {
-                    if (rating_sorting.equals("ASC2"))
-                    {
-                        if(title_sorting.equals("ASC1"))
-                        {
-                            orderClause = "ORDER BY m.title ASC, rating ASC ";
-                        }
-                        else if (title_sorting.equals("DESC1"))
-                        {
-                            orderClause = "ORDER BY m.title DESC, rating ASC ";
-                        }
-                    }
-                    else if (rating_sorting.equals("DESC2"))
-                    {
-                        if(title_sorting.equals("ASC1"))
-                        {
-                            orderClause = "ORDER BY m.title ASC, rating DESC ";
-                        }
-                        else if (title_sorting.equals("DESC1"))
-                        {
-                            orderClause = "ORDER BY m.title DESC, rating DESC ";
-                        }
-                    }
-                }
-                else if (title_sorting.equals("ASC2") || title_sorting.equals("DESC2"))
-                {
-                    if (rating_sorting.equals("ASC1"))
-                    {
-                        if(title_sorting.equals("ASC2"))
-                        {
-                            orderClause = "ORDER BY rating ASC, m.title ASC";
-                        }
-                        else if (title_sorting.equals("DESC2"))
-                        {
-                            orderClause = "ORDER BY rating ASC, m.title DESC";
-                        }
-                    }
-                    else if (rating_sorting.equals("DESC1"))
-                    {
-                        if(title_sorting.equals("ASC2"))
-                        {
-                            orderClause = "ORDER BY rating DESC, m.title ASC";
-                        }
-                        else if (title_sorting.equals("DESC2"))
-                        {
-                            orderClause = "ORDER BY rating DESC, m.title DESC";
-                        }
-                    }
-                }
-
                 StringBuilder mid_query = new StringBuilder();
                 mid_query.append("SELECT m.id AS movie_id ");
                 mid_query.append("FROM movies m JOIN stars_in_movies sim ON m.id = sim.movieId ");
@@ -324,7 +223,8 @@ public class MovieList extends HttpServlet {
 
                 System.out.println("movie id list" + movie_id_list);
 
-                if (!movie_id_list.equals("()")) {
+                if (!movie_id_list.equals("()"))
+                {
                     StringBuilder queryBuilder = new StringBuilder();
                     queryBuilder.append("SELECT COUNT(*) AS row_count, m.id AS movie_id, m.title, m.year, m.director, ");
                     queryBuilder.append("SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT g.name ORDER BY g.name SEPARATOR ', '), ', ', 3) AS genres, ");
@@ -352,46 +252,48 @@ public class MovieList extends HttpServlet {
             }
             // Perform the query
 
-                ResultSet rs = statement.executeQuery(query);
+            ResultSet rs = statement.executeQuery(query);
 
-                JsonArray jsonArray = new JsonArray();
+            JsonArray jsonArray = new JsonArray();
 
                 // Iterate through each row of rs
-                while (rs.next())
-                {
-                    String row_count = rs.getString("row_count");
-                    String movie_id = rs.getString("movie_id");
-                    String movie_title = rs.getString("m.title");
-                    String movie_year = rs.getString("m.year");
-                    String movie_director = rs.getString("m.director");
-                    String movie_genre = rs.getString("genres");
-                    String movie_star = rs.getString("stars");
-                    String movie_rating = rs.getString("rating");
-                    // Create a JsonObject based on the data we retrieve from rs
-                    JsonObject jsonObject = new JsonObject();
-                    jsonObject.addProperty("row_count", row_count);
-                    jsonObject.addProperty("movie_id", movie_id);
-                    jsonObject.addProperty("movie_title", movie_title);
-                    jsonObject.addProperty("movie_year", movie_year);
-                    jsonObject.addProperty("movie_director", movie_director);
-                    jsonObject.addProperty("movie_genre", movie_genre);
-                    jsonObject.addProperty("movie_star", movie_star);
-                    jsonObject.addProperty("movie_rating", movie_rating);
+            while (rs.next())
+            {
+                String row_count = rs.getString("row_count");
+                String movie_id = rs.getString("movie_id");
+                String movie_title = rs.getString("m.title");
+                String movie_year = rs.getString("m.year");
+                String movie_director = rs.getString("m.director");
+                String movie_genre = rs.getString("genres");
+                String movie_star = rs.getString("stars");
+                String movie_rating = rs.getString("rating");
+                // Create a JsonObject based on the data we retrieve from rs
+                JsonObject jsonObject = new JsonObject();
+                jsonObject.addProperty("row_count", row_count);
+                jsonObject.addProperty("movie_id", movie_id);
+                jsonObject.addProperty("movie_title", movie_title);
+                jsonObject.addProperty("movie_year", movie_year);
+                jsonObject.addProperty("movie_director", movie_director);
+                jsonObject.addProperty("movie_genre", movie_genre);
+                jsonObject.addProperty("movie_star", movie_star);
+                jsonObject.addProperty("movie_rating", movie_rating);
 
-                    jsonArray.add(jsonObject);
-                }
-                rs.close();
-                statement.close();
+                jsonArray.add(jsonObject);
+            }
+            rs.close();
+            statement.close();
 
-                // Log to localhost log
-                request.getServletContext().log("getting " + jsonArray.size() + " results");
+            // Log to localhost log
+            request.getServletContext().log("getting " + jsonArray.size() + " results");
 
-                // Write JSON string to output
-                out.write(jsonArray.toString());
-                // Set response status to 200 (OK)
-                response.setStatus(200);
+            // Write JSON string to output
+            out.write(jsonArray.toString());
+            // Set response status to 200 (OK)
+            response.setStatus(200);
 
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
 
             // Write error message JSON object to output
             JsonObject jsonObject = new JsonObject();
@@ -400,7 +302,9 @@ public class MovieList extends HttpServlet {
 
             // Set response status to 500 (Internal Server Error)
             response.setStatus(500);
-        } finally {
+        }
+        finally
+        {
             out.close();
         }
 

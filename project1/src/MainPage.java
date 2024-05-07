@@ -12,6 +12,7 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
@@ -45,11 +46,8 @@ public class MainPage extends HttpServlet {
         // Get a connection from dataSource and let resource manager close the connection after usage.
         try (Connection conn = dataSource.getConnection()) {
 
-            // Declare our statement
-            Statement statement = conn.createStatement();
-
             String query = "SELECT DISTINCT name FROM genres;";
-
+            PreparedStatement statement = conn.prepareStatement(query);
             // Perform the query
             ResultSet rs = statement.executeQuery(query);
 
