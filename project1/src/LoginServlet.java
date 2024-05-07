@@ -14,6 +14,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import org.jasypt.util.password.StrongPasswordEncryptor;
+
 @WebServlet(name = "LoginServlet", urlPatterns = "/api/login")
 public class LoginServlet extends HttpServlet {
 
@@ -49,11 +51,11 @@ public class LoginServlet extends HttpServlet {
         }
 
         String email = request.getParameter("username");
-        String password = request.getParameter("password");
+        String typed_password = request.getParameter("password");
 
 
         try (Connection conn = dataSource.getConnection()) {
-            String email_query = "SELECT email FROM customers WHERE email = ?";
+            String email_query = "SELECT id FROM customers WHERE email = ?";
             PreparedStatement email_statement = conn.prepareStatement(email_query);
             email_statement.setString(1, email);
             ResultSet email_result = email_statement.executeQuery();
@@ -63,30 +65,41 @@ public class LoginServlet extends HttpServlet {
                 responseJsonObject.addProperty("message", "Email: " + email + " not found.");
             }
             else {
-                String query = "SELECT c.id, c.firstName, c.lastName, c.ccId, c.address, c.email, cc.expiration " +
+                String cid = email_result.getString("id");
+                String query = "SELECT c.id, c.firstName, c.lastName, c.ccId, c.address, c.email, c.password, cc.expiration " +
                         "FROM customers c " +
                         "JOIN creditcards cc ON c.ccId = cc.id " +
-                        "WHERE c.email = ? AND c.password = ?";
+                        "WHERE c.email = ? AND c.id = ?";
 
                 PreparedStatement statement = conn.prepareStatement(query);
                 statement.setString(1, email);
-                statement.setString(2, password);
+                statement.setString(2, cid);
                 ResultSet rs = statement.executeQuery();
 
                 if(rs.next()) {
-                    String id = rs.getString("id");
-                    String first_name = rs.getString("firstName");
-                    String last_name = rs.getString("lastName");
-                    String cc_id = rs.getString("ccId");
-                    String address = rs.getString("address");
-                    String expiration_date = rs.getString("expiration");
+                    String encryptedPassword = rs.getString("password");
+                    boolean success = false;
+                    success = new StrongPasswordEncryptor().checkPassword(typed_password, encryptedPassword);
+
+                    if(success)
+                    {
+                        String id = rs.getString("id");
+                        String first_name = rs.getString("firstName");
+                        String last_name = rs.getString("lastName");
+                        String cc_id = rs.getString("ccId");
+                        String address = rs.getString("address");
+                        String expiration_date = rs.getString("expiration");
 
 
-                    request.getSession().setAttribute("user", new User(id, first_name, last_name, cc_id, address, email, expiration_date));
+                        request.getSession().setAttribute("user", new User(id, first_name, last_name, cc_id, address, email, expiration_date));
 
-                    responseJsonObject.addProperty("status", "success");
-                    responseJsonObject.addProperty("message", "success");
-
+                        responseJsonObject.addProperty("status", "success");
+                        responseJsonObject.addProperty("message", "success");
+                    }
+                    else {
+                        responseJsonObject.addProperty("status", "fail");
+                        responseJsonObject.addProperty("message", "Password is incorrect.");
+                    }
                 }
                 else {
                     responseJsonObject.addProperty("status", "fail");
