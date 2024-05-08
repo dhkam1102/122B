@@ -22,6 +22,7 @@ public class Main243Parser extends DefaultHandler {
     private String tempVal;
     //to maintain context
     private Director tempDirector;
+    private Integer unknown_num;
 
     private static final String INSERT_MOVIE_SQL = "INSERT IGNORE INTO movies (id, title, year, director) VALUES (?, ?, ?, ?)";
     private static final String INSERT_GENRES_IN_MOVIES_SQL = "INSERT IGNORE INTO genres_in_movies (genreId, movieId) VALUES (?, ?)";
@@ -29,6 +30,7 @@ public class Main243Parser extends DefaultHandler {
     public Main243Parser() {
         this.directors = new ArrayList<>();
         this.director_name = new ArrayList<>();
+        this.unknown_num = 0;
     }
 
     public void runExample() {
@@ -161,8 +163,8 @@ public class Main243Parser extends DefaultHandler {
         tempVal = new String(ch, start, length);
     }
 
-    public void endElement(String uri, String localName, String qName) throws SAXException {
-
+    public void endElement(String uri, String localName, String qName) throws SAXException
+    {
         if (qName.equalsIgnoreCase("directorfilms"))
         {
             //add it to the list
@@ -173,22 +175,42 @@ public class Main243Parser extends DefaultHandler {
         }
         else if (qName.equalsIgnoreCase("dirname"))
         {
-            if(!director_name.contains(tempVal))
+            if((tempVal.isEmpty()) || (tempVal == null) || tempVal.isBlank())
             {
-                director_name.add(tempVal);
-                tempDirector.setDirectorName(tempVal);
+                tempVal = "Unknown";
             }
+
+            for (Director director : this.directors)
+            {
+                if (director.getDirectorName().equals(tempVal))
+                {
+                    tempDirector = director;
+                    break;
+                }
+            }
+
+            tempDirector.setDirectorName(tempVal);
         }
         else if (qName.equalsIgnoreCase("fid"))
         {
-            tempDirector.addMovieID(tempVal);
+            if(tempVal.isEmpty() || tempVal == null || tempVal.isBlank())
+            {
+                tempVal = "Unknown" + unknown_num;
+                unknown_num ++;
+            }
+            List <String> movie_ID_list = tempDirector.getMovieIDList();
+            if(!movie_ID_list.contains(tempVal))
+            {
+                tempDirector.addMovieID(tempVal);
+            }
         }
         else if (qName.equalsIgnoreCase("t"))
         {
             String movieID = tempDirector.getLastAddedMovieID();
             tempDirector.addMovieIDMovie(movieID, tempVal);
         }
-        else if (qName.equalsIgnoreCase("year")) {
+        else if (qName.equalsIgnoreCase("year"))
+        {
             String movieID = tempDirector.getLastAddedMovieID();
             try {
                 int year = Integer.parseInt(tempVal);
