@@ -1,15 +1,12 @@
 import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import jakarta.servlet.ServletConfig;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -73,6 +70,8 @@ public class Main243Parser extends DefaultHandler {
         {
             // create database connection
             Connection conn = DriverManager.getConnection(loginUrl, loginUser, loginPasswd);
+            conn.setAutoCommit(false);
+
             for (Director director : directors)
             {
                 String directorName = director.getDirectorName();
@@ -93,7 +92,7 @@ public class Main243Parser extends DefaultHandler {
                     List<String> genre_list = director.getMovieGenreList(movieID);
                     for (String genre : genre_list)
                     {
-                        if(genre.equals("") || genre.isEmpty())
+                        if(genre.equals("") || genre.isEmpty() || genre.isBlank() || genre == null)
                         {
                             genre = "Undefined";
                         }
@@ -106,6 +105,7 @@ public class Main243Parser extends DefaultHandler {
                         }
                     }
                 }
+                conn.commit();
             }
         }
         catch (SQLException e)
@@ -114,8 +114,8 @@ public class Main243Parser extends DefaultHandler {
         }
     }
 
-    private int getGenreId(Connection conn, String genre) throws SQLException {
-
+    private int getGenreId(Connection conn, String genre) throws SQLException
+    {
         try (PreparedStatement statement = conn.prepareStatement("SELECT id FROM genres WHERE name = ?"))
         {
             statement.setString(1, genre);
