@@ -50,7 +50,6 @@ public class LoginFilter implements Filter {
         allowedURIs.add("login.html");
         allowedURIs.add("login.js");
         allowedURIs.add("api/login");
-<<<<<<< HEAD
 
         allowedURIs.add("_dashboard.html");
         allowedURIs.add("_dashboard.js");
@@ -59,14 +58,6 @@ public class LoginFilter implements Filter {
         allowedURIs.add("metadata.html");
         allowedURIs.add("metadata.js");
         allowedURIs.add("api/metadata");
-=======
-        allowedURIs.add("_dashboard.html");
-        allowedURIs.add("_dashboard.js");
-        allowedURIs.add("api/_dashboard");
-        allowedURIs.add("dashboard.html");
-        allowedURIs.add("dashboard.js");
-        allowedURIs.add("api/dashboard");
->>>>>>> 523944064bd3506ea13dc7f0288651711a5a4033
     }
 
     public void destroy() {

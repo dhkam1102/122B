@@ -7,22 +7,18 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-<<<<<<<< HEAD:project1/src/UpdateSecurePasswordCustomer.java
 public class UpdateSecurePasswordCustomer {
-========
-public class UpdateSecurePasswordCustomers {
->>>>>>>> 523944064bd3506ea13dc7f0288651711a5a4033:project1/src/UpdateSecurePasswordCustomers.java
 
     /*
-     * 
+     *
      * This program updates your existing moviedb customers table to change the
      * plain text passwords to encrypted passwords.
-     * 
+     *
      * You should only run this program **once**, because this program uses the
      * existing passwords as real passwords, then replace them. If you run it more
      * than once, it will treat the encrypted passwords as real passwords and
      * generate wrong values.
-     * 
+     *
      */
     public static void main(String[] args) throws Exception {
 
@@ -55,7 +51,7 @@ public class UpdateSecurePasswordCustomers {
             // get the ID and plain text password from current table
             String id = rs.getString("id");
             String password = rs.getString("password");
-            
+
             // encrypt the password using StrongPasswordEncryptor
             String encryptedPassword = passwordEncryptor.encryptPassword(password);
 

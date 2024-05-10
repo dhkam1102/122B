@@ -14,11 +14,7 @@ function handleLoginResult(resultDataString) {
     // If login succeeds, it will redirect the user to index.html
     if (resultDataJson["status"] === "success") {
         console.log("success login");
-<<<<<<< HEAD
         window.location.replace("metadata.html");
-=======
-        window.location.replace("dashboard.html");
->>>>>>> 523944064bd3506ea13dc7f0288651711a5a4033
 
     } else {
         // If login fails, the web page will display
