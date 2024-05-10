@@ -1,21 +1,38 @@
 import com.google.gson.JsonObject;
+<<<<<<< HEAD
 import jakarta.servlet.ServletConfig;
+=======
+>>>>>>> 523944064bd3506ea13dc7f0288651711a5a4033
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+<<<<<<< HEAD
 import org.jasypt.util.password.StrongPasswordEncryptor;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
+=======
+import jakarta.servlet.ServletConfig;
+import javax.sql.DataSource;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+
+>>>>>>> 523944064bd3506ea13dc7f0288651711a5a4033
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+<<<<<<< HEAD
 @WebServlet(name = "EmployeeLogin", urlPatterns = "/api/_dashboard")
+=======
+import org.jasypt.util.password.StrongPasswordEncryptor;
+
+@WebServlet(name = "LoginServlet", urlPatterns = "/api/_dashboard")
+>>>>>>> 523944064bd3506ea13dc7f0288651711a5a4033
 public class EmployeeLogin extends HttpServlet {
 
     // Create a dataSource which registered in web.

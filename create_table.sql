@@ -87,6 +87,13 @@ CREATE TABLE employees (
     password VARCHAR(20) NOT NULL,
     fullname VARCHAR(100)
 );
+<<<<<<< HEAD
+=======
+
+INSERT INTO employees (email, password, fullname) 
+VALUES ('classta@email.edu', 'classta', 'TA CS122B');
+
+>>>>>>> 523944064bd3506ea13dc7f0288651711a5a4033
 
 INSERT INTO employees (email, password, fullname) 
 VALUES ('classta@email.edu', 'classta', 'TA CS122B');
