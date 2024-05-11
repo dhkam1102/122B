@@ -17,7 +17,7 @@ BEGIN
     DECLARE max_star_id VARCHAR(10);
 
     -- CHECK MOVIE EXISTS
-    SELECT id INTO movie_id FROM movies WHERE title = movie_title LIMIT 1;
+    SELECT id INTO movie_id FROM movies WHERE title = movie_title AND director = movie_director AND year = movie_year LIMIT 1;
 
     IF movie_id IS NULL THEN
         -- GET MAX ID
