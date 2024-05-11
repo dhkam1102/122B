@@ -20,16 +20,26 @@ $(document).ready(function() {
             formData["starBirthYear"] = starBirthYear;
         }
 
+
         $.ajax({
             type: 'GET',
-            url: 'api/add-star', // URL of your servlet
+            url: 'api/add-movie',
             data: formData,
             success: function(response) {
-                alert(response); // Show success message
+                // Check if response is an array
+                if (Array.isArray(response)) {
+                    // Iterate over the array and append each message to the resultMessage table
+                    response.forEach(function(item) {
+                        $('#resultMessage').append('<tr><td>' + item.message + '</td></tr>');
+                    });
+                } else {
+                    // If response is not an array, assume it's a single message object
+                    $('#resultMessage').append('<tr><td>' + response.message + '</td></tr>');
+                }
+
+                // Show the result message table
+                $('#resultTable').show();
             },
-            error: function(xhr, status, error) {
-                alert('Error adding star: ' + xhr.responseText); // Show error message
-            }
         });
     });
 });

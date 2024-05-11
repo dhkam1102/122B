@@ -18,39 +18,55 @@ import java.sql.*;
 @WebServlet(name = "AddMovie", urlPatterns = "/api/add-movie")
 public class AddMovie extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.setContentType("text/plain");
+        response.setContentType("application/json");
         PrintWriter out = response.getWriter();
 
         String movieTitle = request.getParameter("movieTitle");
         String movieDirector = request.getParameter("movieDirector");
-        String movieYear = request.getParameter("movieYear");
+        Integer movieYear = Integer.valueOf(request.getParameter("movieYear"));
         String movieGenre = request.getParameter("movieGenre");
         String starName = request.getParameter("starName");
         String starBirthYear = request.getParameter("starBirthYear");
 
         try {
-            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/moviedb", "mytestuser", "My6$Password");
+            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/parsing", "mytestuser", "My6$Password");
 
-            CallableStatement statement = conn.prepareCall("{call add_movie(?, ?, ?, ?, ?, ?)}");
+            String callProcedure = "call add_movie (?, ?, ?, ?, ?, ?)";
+            try(PreparedStatement statement = conn.prepareStatement(callProcedure))
+            {
+                statement.setString(1, movieTitle);
+                statement.setInt(2, movieYear);
+                statement.setString(3, movieDirector);
 
-            // Set the parameter for the stored procedure
-            statement.setString(1, movieTitle);
-            statement.setInt(1, Integer.parseInt(movieDirector));
-            statement.setString(1, movieYear);
-            statement.setString(1, movieGenre);
-            statement.setString(1, starName);
-            statement.setInt(1, Integer.parseInt(starBirthYear));
+                statement.setString(4, movieGenre);
+                statement.setString(5, starName);
+                if(starBirthYear != null) {
+                    statement.setInt(6, Integer.parseInt(starBirthYear));
+                }
+                else {
+                    statement.setNull(6, java.sql.Types.INTEGER);
+                }
 
-            // Execute the stored procedure
-            statement.execute();
+                // Set the parameter for the stored procedure
 
-            // Handle any result from the stored procedure, if necessary
+                // Execute the stored procedure
+                ResultSet rs = statement.executeQuery();
 
-            // Close the statement and connection
-            statement.close();
+                // Handle any result from the stored procedure, if necessary
+                JsonArray jsonArray = new JsonArray();
+                while(rs.next()) {
+                    JsonObject jsonObject = new JsonObject();
+                    String message = rs.getString("message");
+                    System.out.println(message);
+                    jsonObject.addProperty("message", message);
+                    jsonArray.add(jsonObject);
+                }
+                // Close the statement and connection
+                out.write(jsonArray.toString());
+            }
             conn.close();
         } catch (SQLException e) {
-            out.println("Error adding star: " + e.getMessage());
+            out.println("Error adding movie: " + e.getMessage());
         }
     }
 }
