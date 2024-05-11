@@ -130,7 +130,7 @@ public class MovieList extends HttpServlet {
             {
                 JsonArray jsonArray = new JsonArray();
                 String movieListQuery = "SELECT DISTINCT m.id as movie_id, m.title, m.year, m.director, r.rating " +
-                        "FROM movies AS m, ratings as r, genres_in_movies AS gim, genres AS g" +
+                        "FROM movies AS m, ratings as r, genres_in_movies AS gim, genres AS g " +
                         "WHERE m.id = r.movieId AND g.name = ? AND gim.genreId = g.id " + orderClause + "LIMIT " + page_size + " OFFSET " + offset;
                 try(PreparedStatement movieListStatement = conn.prepareStatement(movieListQuery))
                 {
