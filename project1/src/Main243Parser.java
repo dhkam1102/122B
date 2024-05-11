@@ -1,3 +1,4 @@
+import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
@@ -64,13 +65,20 @@ public class Main243Parser extends DefaultHandler {
         // add data to database
         String loginUser = "mytestuser";
         String loginPasswd = "My6$Password";
-        String loginUrl = "jdbc:mysql://localhost:3306/parsing";
+        String loginUrl = "jdbc:mysql://localhost:3306/moviedb";
 
-        try
-        {
+        String moviesFile = "movies.csv";
+        String genresInMovies = "genres_in_movies.csv";
+
+        try (FileWriter moviesWriter = new FileWriter(moviesFile);
+             FileWriter genresInMoviesWriter = new FileWriter(genresInMovies)) {
+
+            moviesWriter.write("id,title,year,director\n");
+            genresInMoviesWriter.write("genreId,movieId\n");
+
             // create database connection
             Connection conn = DriverManager.getConnection(loginUrl, loginUser, loginPasswd);
-            conn.setAutoCommit(false);
+//            conn.setAutoCommit(false);
 
             for (Director director : directors)
             {
@@ -80,14 +88,7 @@ public class Main243Parser extends DefaultHandler {
                     Integer movieYear = director.getMovieYear(movieID);
                     String movieName = director.getMovie(movieID);
 
-                    try (PreparedStatement statement = conn.prepareStatement(INSERT_MOVIE_SQL))
-                    {
-                        statement.setString(1, movieID);
-                        statement.setString(2, movieName);
-                        statement.setInt(3, movieYear);
-                        statement.setString(4, directorName);
-                        statement.executeUpdate();
-                    }
+                    moviesWriter.write(String.format("%s,%s,%d,%s\n", movieID, movieName, movieYear, directorName));
 
                     List<String> genre_list = director.getMovieGenreList(movieID);
                     for (String genre : genre_list)
@@ -97,20 +98,21 @@ public class Main243Parser extends DefaultHandler {
                             genre = "Undefined";
                         }
                         Integer genreID = getGenreId(conn, genre);
-                        try (PreparedStatement genresInMoviesStatement = conn.prepareStatement(INSERT_GENRES_IN_MOVIES_SQL))
-                        {
-                            genresInMoviesStatement.setInt(1, genreID);
-                            genresInMoviesStatement.setString(2, movieID);
-                            genresInMoviesStatement.executeUpdate();
-                        }
+                        genresInMoviesWriter.write(String.format("%d,%s\n", genreID, movieID));
+
                     }
                 }
-                conn.commit();
+//                conn.commit();
             }
+            moviesWriter.flush();
+            genresInMoviesWriter.flush();
         }
-        catch (SQLException e)
+        catch (IOException e)
         {
-            e.printStackTrace();
+            System.err.println("Error in writing to the csv file: " + e.getMessage());
+        }
+        catch(SQLException e) {
+            System.err.println("Error in sql connection: " + e.getMessage());
         }
     }
 
