@@ -29,7 +29,7 @@ public class AddMovie extends HttpServlet {
         String starBirthYear = request.getParameter("starBirthYear");
 
         try {
-            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/parsing", "mytestuser", "My6$Password");
+            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/moviedb", "mytestuser", "My6$Password");
 
             String callProcedure = "call add_movie (?, ?, ?, ?, ?, ?)";
             try(PreparedStatement statement = conn.prepareStatement(callProcedure))
