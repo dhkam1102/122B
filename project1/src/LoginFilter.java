@@ -58,6 +58,14 @@ public class LoginFilter implements Filter {
         allowedURIs.add("metadata.html");
         allowedURIs.add("metadata.js");
         allowedURIs.add("api/metadata");
+
+        allowedURIs.add("add-star.html");
+        allowedURIs.add("add-star.js");
+        allowedURIs.add("api/add-star");
+
+        allowedURIs.add("add-movie.html");
+        allowedURIs.add("add-movie.js");
+        allowedURIs.add("api/add-movie");
     }
 
     public void destroy() {

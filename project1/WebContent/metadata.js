@@ -13,15 +13,22 @@ function handleResult(resultData) {
 
     // Loop through the resultData to populate the table
     for (let i = 0; i < resultData.length; i++) {
-        let tableRow = jQuery("<tr></tr>");
+        let tableObject = resultData[i];
+        let tableName = tableObject["table_name"];
+        let columns = tableObject["columns"];
 
-        // Add table data for table name, column name, and type name
-        tableRow.append("<td>" + resultData[i]["table_name"] + "</td>");
-        tableRow.append("<td>" + resultData[i]["column_name"]  + "</td>");
-        tableRow.append("<td>" + resultData[i]["type_name"]  + "</td>");
+        for (let j = 0; j < columns.length; j++) {
+            let columnName = columns[j]["column_name"];
+            let columnType = columns[j]["type_name"];
 
-        // Append the table row to the table
-        table.append(tableRow);
+            let tableRow = jQuery("<tr></tr>");
+            tableRow.append("<td>" + tableName + "</td>");
+            tableRow.append("<td>" + columnName + "</td>");
+            tableRow.append("<td>" + columnType + "</td>");
+
+            // Append the table row to the table
+            table.append(tableRow);
+        }
     }
 
     // Append the table to the table container

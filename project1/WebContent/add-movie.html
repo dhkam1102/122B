@@ -2,10 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MetaData</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <title>Add Movie</title>
     <style>
         body {
             background-color: #FDF5E6;
@@ -84,18 +81,38 @@
     </style>
 </head>
 <body>
-<h1>Metadata</h1>
+<h1>Add Movie</h1>
 
 <div class="add-buttons">
-    <button class="btn btn-primary" onclick="window.location.href='add-movie.html'">Add Movie</button>
+    <button class="btn btn-primary" onclick="window.location.href='metadata.html'">Metadata</button>
     <button class="btn btn-primary" onclick="window.location.href='add-star.html'">Add Star</button>
 </div>
 
-<div id="table-container"></div>
+<form>
+    <label for="movieTitle">Movie Title:</label><br>
+    <input type="text" id="movieTitle" name="movieTitle"><br><br>
+
+    <label for="movieDirector">Movie Director:</label><br>
+    <input type="text" id="movieDirector" name="movieDirector"><br><br>
+
+    <label for="movieYear">Movie Year:</label><br>
+    <input type="text" id="movieYear" name="movieYear"><br><br>
+
+    <label for="starName">Star Name:</label><br>
+    <input type="text" id="starName" name="starName"><br><br>
+
+    <label for="starBirthYear">Birth Year (Optional):</label><br>
+    <input type="text" id="starBirthYear" name="starBirthYear"><br><br>
+
+    <label for="movieGenre">Movie Genre:</label><br>
+    <input type="text" id="movieGenre" name="movieGenre"><br><br>
+
+    <input type="submit" value="Submit">
+</form>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-<script src="metadata.js"></script>
+<script src="add-movie.js"></script>
 </body>
 </html>

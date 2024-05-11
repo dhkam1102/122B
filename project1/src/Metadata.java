@@ -15,68 +15,64 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.*;
 
 
 // Declaring a WebServlet called StarsServlet, which maps to url "/api/stars"
 @WebServlet(name = "Metadata", urlPatterns = "/api/metadata")
 public class Metadata extends HttpServlet {
-    private static final long serialVersionUID = 1L;
 
-    // Create a dataSource which registered in web.
-    private DataSource dataSource;
-
-    public void init(ServletConfig config) {
-        try {
-            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/moviedb");
-        } catch (NamingException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-     */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String url = "jdbc:mysql://localhost:3306/moviedb";
+        String user = "mytestuser";
+        String password = "My6$Password";
 
-        response.setContentType("application/json"); // Response mime type
-
-        // Output stream to STDOUT
-        PrintWriter out = response.getWriter();
-
-        // Get a connection from dataSource and let resource manager close the connection after usage.
-        try (Connection conn = dataSource.getConnection()) {
-
+        try (Connection conn = DriverManager.getConnection(url, user, password)) {
             DatabaseMetaData metaData = conn.getMetaData();
-            ResultSet tables = metaData.getTables(null, null, "%", new String[]{"TABLE"});
+
+            // Get tables
+            ResultSet tables = metaData.getTables("moviedb", null, null, new String[] {"TABLE"});
             JsonArray jsonArray = new JsonArray();
             while (tables.next()) {
                 String tableName = tables.getString("TABLE_NAME");
-                JsonObject jsonObject = new JsonObject();
+
                 System.out.println("Table Name: " + tableName);
 
-                ResultSet columns = metaData.getColumns(null, null, tableName, null);
+                JsonObject tableObject = new JsonObject();
+                tableObject.addProperty("table_name", tableName);
+                JsonArray columnsArray = new JsonArray();
+
+                ResultSet columns = metaData.getColumns("moviedb", null, tableName, null);
                 while (columns.next()) {
                     String columnName = columns.getString("COLUMN_NAME");
                     String columnType = columns.getString("TYPE_NAME");
 
-                    jsonObject.addProperty("table_name", tableName);
-                    jsonObject.addProperty("column_name", columnName);
-                    jsonObject.addProperty("type_name", columnType);
+                    JsonObject columnObject = new JsonObject();
+                    columnObject.addProperty("column_name", columnName);
+                    columnObject.addProperty("type_name", columnType);
+                    columnsArray.add(columnObject);
 
-                    jsonArray.add(jsonObject);
                     System.out.println("\tColumn Name: " + columnName + ", Type: " + columnType);
                 }
                 columns.close();
-                // Write JSON string to output
-                out.write(jsonArray.toString());
-                // Set response status to 200 (OK)
-                response.setStatus(200);
+
+                tableObject.add("columns", columnsArray);
+                jsonArray.add(tableObject);
             }
+            tables.close();
+
+            // Write JSON string to output
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            try (PrintWriter out = response.getWriter()) {
+                out.print(jsonArray.toString());
+                out.flush();
+            }
+            response.setStatus(200);
+
         } catch (SQLException e) {
             e.printStackTrace();
+            response.setStatus(500);
         }
-
-        // Always remember to close db connection after usage. Here it's done by try-with-resources
-
     }
 }
