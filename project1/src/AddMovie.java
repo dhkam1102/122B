@@ -21,37 +21,34 @@ public class AddMovie extends HttpServlet {
         response.setContentType("text/plain");
         PrintWriter out = response.getWriter();
 
+        String movieTitle = request.getParameter("movieTitle");
+        String movieDirector = request.getParameter("movieDirector");
+        String movieYear = request.getParameter("movieYear");
+        String movieGenre = request.getParameter("movieGenre");
         String starName = request.getParameter("starName");
         String starBirthYear = request.getParameter("starBirthYear");
 
         try {
             Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/moviedb", "mytestuser", "My6$Password");
 
-            // Retrieve the current maximum id
-            String getIDQuery = "SELECT MAX(id) AS max_id FROM stars WHERE id LIKE 'insert%'";
-            int newId = 0;
-            try (PreparedStatement getIDStatement = conn.prepareStatement(getIDQuery)) {
-                ResultSet resultSet = getIDStatement.executeQuery();
-                if (resultSet.next()) {
-                    String maxId = resultSet.getString("max_id");
-                    if (maxId != null && maxId.matches("insert\\d+")) {
-                        newId = Integer.parseInt(maxId.substring(6)) + 1; // Get the number part and increment
-                    }
-                }
-            }
+            CallableStatement statement = conn.prepareCall("{call add_movie(?, ?, ?, ?, ?, ?)}");
 
-            System.out.println(newId);
-            String insertionQuery = "INSERT INTO stars (id, name, birthYear) VALUES (?, ?, ?)";
-            try (PreparedStatement insertionStatement = conn.prepareStatement(insertionQuery)) {
-                insertionStatement.setString(1, "insert" + newId);
-                insertionStatement.setString(2, starName);
-                insertionStatement.setString(3, starBirthYear);
-                System.out.println(insertionQuery);
-                insertionStatement.executeUpdate();
-            }
+            // Set the parameter for the stored procedure
+            statement.setString(1, movieTitle);
+            statement.setInt(1, Integer.parseInt(movieDirector));
+            statement.setString(1, movieYear);
+            statement.setString(1, movieGenre);
+            statement.setString(1, starName);
+            statement.setInt(1, Integer.parseInt(starBirthYear));
 
+            // Execute the stored procedure
+            statement.execute();
+
+            // Handle any result from the stored procedure, if necessary
+
+            // Close the statement and connection
+            statement.close();
             conn.close();
-            out.println("Star added successfully!");
         } catch (SQLException e) {
             out.println("Error adding star: " + e.getMessage());
         }
