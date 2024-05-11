@@ -16,7 +16,8 @@ import java.io.PrintWriter;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.HashMap;
-
+import java.util.List;
+import java.util.ArrayList;
 //need to do
 
 
@@ -77,6 +78,7 @@ public class Payment extends HttpServlet {
                 && user.getCcId().equals(ccId) && user.getExpDate().equals(expDate)) {
 
             HashMap<String, Integer> cart = (HashMap<String, Integer>) session.getAttribute("cart");
+            List<Integer> saleIds = new ArrayList<>();
 
             if (cart == null) {
                 jsonResponse.addProperty("status", "fail");
@@ -102,6 +104,10 @@ public class Payment extends HttpServlet {
                                     sales_statement.setString(2, movie_id);
                                     sales_statement.setDate(3, Date.valueOf(saleDate));
                                     int rows_updated = sales_statement.executeUpdate();
+                                    ResultSet rs1 = sales_statement.getGeneratedKeys();
+                                    if (rs1.next()) {
+                                        saleIds.add(rs1.getInt(1));
+                                    }
                                 }
 //                                System.out.println("movie_id: " + movie_id);
 //                                System.out.println("sale Date:" + saleDate);
@@ -120,6 +126,7 @@ public class Payment extends HttpServlet {
                     }
 //                    jsonResponse.addProperty("status", "success");
 //                    jsonResponse.addProperty("message", "success");
+                    session.setAttribute("saleIds", saleIds);
                 }
                 catch (Exception e) {
                     jsonResponse.addProperty("status", "fail");

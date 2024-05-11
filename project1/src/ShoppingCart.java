@@ -125,7 +125,7 @@ public class ShoppingCart extends HttpServlet {
 
             if (cart.containsKey(movie_title)) {
                 int current_quantity = cart.get(movie_title);
-                if (current_quantity - quantity < 0) {
+                if (current_quantity + quantity < 0) {
                     jsonResponse.addProperty("status", "failure");
                     jsonResponse.addProperty("message", "Cannot have negative quantity");
                     response.setStatus(400); // 400 status code
