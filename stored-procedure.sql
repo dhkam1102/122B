@@ -1,3 +1,5 @@
+use moviedb;
+
 DELIMITER //
 
 CREATE PROCEDURE add_movie(
