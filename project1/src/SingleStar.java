@@ -61,61 +61,57 @@ public class SingleStar extends HttpServlet {
                     "JOIN stars s ON sim.starId = s.id " +
                     "WHERE s.name = ? AND sim.movieId = ?";
             // Declare our statement
-            PreparedStatement statement = conn.prepareStatement(query);
 
+            try(PreparedStatement statement = conn.prepareStatement(query))
+            {
+                statement.setString(1, star_name);
+                statement.setString(2, movie_id);
 
-            // Set the parameter represented by "?" in the query to the id we get from url,
-            // num 1 indicates the first "?" in the query
-            statement.setString(1, star_name);
-            statement.setString(2, movie_id);
+                ResultSet rs = statement.executeQuery();
 
-            // Perform the query
-            ResultSet rs = statement.executeQuery();
+                JsonArray jsonArray = new JsonArray();
+                if (rs.next()) {
+                    String starId = rs.getString("starId");
 
-            JsonArray jsonArray = new JsonArray();
-            if (rs.next()) {
-                String starId = rs.getString("starId");
+                    String query2 = "SELECT s.name, IFNULL(s.birthYear, 'N/A') AS birthYear, " +
+                            "m.id AS movie_id, m.title AS movie_title " +
+                            "FROM stars s " +
+                            "LEFT JOIN stars_in_movies sim ON s.id = sim.starId " +
+                            "LEFT JOIN movies m ON sim.movieId = m.id " +
+                            "WHERE s.id = ? " +
+                            "ORDER BY m.year DESC, m.title ASC";
 
-                String query2 = "SELECT s.name, IFNULL(s.birthYear, 'N/A') AS birthYear, " +
-                        "m.id AS movie_id, m.title AS movie_title " +
-                        "FROM stars s " +
-                        "LEFT JOIN stars_in_movies sim ON s.id = sim.starId " +
-                        "LEFT JOIN movies m ON sim.movieId = m.id " +
-                        "WHERE s.id = ? " +
-                        "ORDER BY m.year DESC, m.title ASC";
+                    try(PreparedStatement statement2 = conn.prepareStatement(query2))
+                    {
+                        statement2.setString(1, starId);
+                        ResultSet rs2 = statement2.executeQuery();
 
-                PreparedStatement statement2 = conn.prepareStatement(query2);
-                statement2.setString(1, starId);
-                ResultSet rs2 = statement2.executeQuery();
+                        // Iterate through each row of rs
+                        while (rs2.next()) {
 
-                // Iterate through each row of rs
-                while (rs2.next()) {
+                            String name = rs2.getString("name");
+                            String birthYear = rs2.getString("birthYear");
+                            String movie_id2 = rs2.getString("movie_id");
+                            String movie_title = rs2.getString("movie_title");
 
-                    String name = rs2.getString("name");
-                    String birthYear = rs2.getString("birthYear");
-                    String movie_id2 = rs2.getString("movie_id");
-                    String movie_title = rs2.getString("movie_title");
+                            // Create a JsonObject based on the data we retrieve from rs
 
-                    // Create a JsonObject based on the data we retrieve from rs
+                            JsonObject jsonObject = new JsonObject();
+                            jsonObject.addProperty("star_id", starId);
+                            jsonObject.addProperty("star_name", name);
+                            jsonObject.addProperty("birthYear", birthYear);
+                            jsonObject.addProperty("movie_id2", movie_id2);
+                            jsonObject.addProperty("movie_title", movie_title);
 
-                    JsonObject jsonObject = new JsonObject();
-                    jsonObject.addProperty("star_id", starId);
-                    jsonObject.addProperty("star_name", name);
-                    jsonObject.addProperty("birthYear", birthYear);
-                    jsonObject.addProperty("movie_id2", movie_id2);
-                    jsonObject.addProperty("movie_title", movie_title);
-
-                    jsonArray.add(jsonObject);
+                            jsonArray.add(jsonObject);
+                        }
+                    }
                 }
-                rs2.close();
-                statement2.close();
+                out.write(jsonArray.toString());
+                // Set response status to 200 (OK)
+                response.setStatus(200);
             }
-            rs.close();
-            statement.close();
-            // Write JSON string to output
-            out.write(jsonArray.toString());
-            // Set response status to 200 (OK)
-            response.setStatus(200);
+
         } catch (Exception e) {
             // Write error message JSON object to output
             JsonObject jsonObject = new JsonObject();
