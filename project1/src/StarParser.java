@@ -228,12 +228,13 @@ public class StarParser extends DefaultHandler {
         }
         return filteredStars;
     }
+//        /Users/briankam/122B/cs122b-s24-team-49/project1/src/stanford-movies/actors63.xml
 
 
     public static void main(String[] args) {
         StarParser parser = new StarParser();
-        parser.parseDocument("stanford-movies/actors63.xml", true); // Parse actors
-        parser.parseDocument("stanford-movies/casts124.xml", false); // Parse casts
+        parser.parseDocument("src/stanford-movies/actors63.xml", true); // Parse actors
+        parser.parseDocument("src/stanford-movies/casts124.xml", false); // Parse casts
         List<Star> stars = parser.getStars();
         stars.forEach(System.out::println);
 //        System.out.println("from here I will start the insertion part =======================");

@@ -46,7 +46,7 @@ public class Main243Parser extends DefaultHandler {
             SAXParser sp = spf.newSAXParser();
 
             //parse the file and also register this class for call backs
-            sp.parse("stanford-movies/mains243.xml", this);
+            sp.parse("src/stanford-movies/mains243.xml", this);
 
         } catch (SAXException se) {
             se.printStackTrace();
