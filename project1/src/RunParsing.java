@@ -93,14 +93,15 @@ public class RunParsing {
         String loginPasswd = "My6$Password";
         String loginUrl = "jdbc:mysql://localhost:3306/moviedb?allowLoadLocalInfile=true";
 
-        String[] starParserArgs = {};
-        StarParser.main(starParserArgs);
-
         String[] mainParserArgs = {};
         Main243Parser.main(mainParserArgs);
 
         loadMovieData(pathToMovie, loginUser, loginPasswd, loginUrl);
         loadGenreInMovieData(pathToGenreInMovie, loginUser, loginPasswd, loginUrl);
+
+        String[] starParserArgs = {};
+        StarParser.main(starParserArgs);
+
         loadStarData(pathToStar, loginUser, loginPasswd, loginUrl);
         loadStarMovieData(pathToStarMovie, loginUser, loginPasswd, loginUrl);
 
