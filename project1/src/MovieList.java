@@ -329,7 +329,7 @@ public class MovieList extends HttpServlet {
             {
                 StringBuilder mid_query = new StringBuilder();
                 mid_query.append("SELECT m.id AS movie_id ");
-                mid_query.append("FROM movies m JOIN stars_in_movies sim ON m.id = sim.movieId ");
+                mid_query.append("FROM movies m JOIN ratings r ON m.id = r.movieId JOIN stars_in_movies sim ON m.id = sim.movieId ");
                 mid_query.append("JOIN stars s ON sim.starId = s.id ");
                 mid_query.append("WHERE 1=1 "); // Start with a true condition to simplify subsequent ANDs
 
