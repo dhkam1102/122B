@@ -352,10 +352,10 @@ public class MovieList extends HttpServlet {
                 JsonArray jsonArray = new JsonArray();
                 try(PreparedStatement midGetQuery = conn.prepareStatement(midQuery))
                 {
-                    JsonObject jsonObject = new JsonObject();
                     ResultSet result = midGetQuery.executeQuery();
                     while (result.next())
                     {
+                        JsonObject jsonObject = new JsonObject();
                         String movieId = result.getString("movie_id");
                         String movieInfoQuery = "SELECT m.id AS movie_id, m.title, m.year, m.director, COALESCE(r.rating, 0.0) AS rating " +
                                 "FROM movies m " +
@@ -433,9 +433,10 @@ public class MovieList extends HttpServlet {
                                     }
                                     jsonObject.addProperty("movie_star", movie_star);
                                 }
-                                jsonArray.add(jsonObject);
+
                             }
                         }
+                        jsonArray.add(jsonObject);
                     }
                 }
                 request.getServletContext().log("getting " + jsonArray.size() + " results");
