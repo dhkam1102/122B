@@ -113,7 +113,7 @@ public class SingleMovie extends HttpServlet {
                         {
                             movie_genre = "N/A";
                         }
-                        jsonObject.addProperty("movie_genre", movie_genre);
+                        jsonObject.addProperty("movie_genres", movie_genre);
                     }
 
                     try(PreparedStatement starListStatement = conn.prepareStatement(starListQuery))
@@ -133,7 +133,7 @@ public class SingleMovie extends HttpServlet {
                         {
                             movie_star = "N/A";
                         }
-                        jsonObject.addProperty("movie_star", movie_star);
+                        jsonObject.addProperty("movie_stars", movie_star);
                     }
                     jsonArray.add(jsonObject);
                 }
