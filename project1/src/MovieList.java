@@ -137,19 +137,12 @@ public class MovieList extends HttpServlet {
                     while(result.next())
                     {
                         String genreId = result.getString(1);
-                        String movieListQuery = "SELECT DISTINCT " +
-                            "m.id AS movie_id, " +
-                            "m.title, " +
-                            "m.year, " +
-                            "m.director, " +
-                            "COALESCE(r.rating, 0.0) AS rating " +
+                        String movieListQuery = "SELECT DISTINCT m.id AS movie_id, m.title, m.year, m.director, COALESCE(r.rating, 0.0) AS rating " +
                             "FROM movies AS m " +
                             "JOIN genres_in_movies AS gim ON m.id = gim.movieId " +
                             "LEFT JOIN ratings AS r ON m.id = r.movieId " +
                             "WHERE gim.genreId = ? " + // Placeholder for genre ID
-                            orderClause + " " + // Inject order clause
-                            "LIMIT " + page_size + " " + // Inject page size
-                            "OFFSET " + offset; // Inject offset
+                            orderClause + " LIMIT " + page_size + " OFFSET " + offset;// Inject order clause
                         try(PreparedStatement movieListStatement = conn.prepareStatement(movieListQuery))
                         {
                             movieListStatement.setString(1, genreId);
@@ -183,6 +176,10 @@ public class MovieList extends HttpServlet {
                                         genreStringBuilder.append(genreName);
                                     }
                                     String movie_genre = genreStringBuilder.toString();
+                                    if(movie_genre.isBlank() || movie_genre == null || movie_genre.isEmpty())
+                                    {
+                                        movie_genre = "N/A";
+                                    }
                                     jsonObject.addProperty("movie_genre", movie_genre);
                                 }
 
@@ -206,6 +203,10 @@ public class MovieList extends HttpServlet {
                                         starStringBuilder.append(starName);
                                     }
                                     String movie_star = starStringBuilder.toString();
+                                    if(movie_star.isBlank() || movie_star == null || movie_star.isEmpty())
+                                    {
+                                        movie_star = "N/A";
+                                    }
                                     jsonObject.addProperty("movie_star", movie_star);
                                 }
                                 jsonArray.add(jsonObject);
@@ -235,7 +236,8 @@ public class MovieList extends HttpServlet {
                 }
 
                 JsonArray jsonArray = new JsonArray();
-                String movieListQuery = "SELECT m.id as movie_id, m.title, m.year, m.director FROM movies AS m " + whereClause + orderClause + "LIMIT " + page_size + " OFFSET " + offset;
+                String movieListQuery = "SELECT m.id as movie_id, m.title, m.year, m.director, COALESCE(r.rating, 0.0) AS rating" +
+                        " FROM movies AS m LEFT JOIN ratings AS r ON m.id = r.movieId " + whereClause + orderClause + "LIMIT " + page_size + " OFFSET " + offset;
                 try(PreparedStatement movieListStatement = conn.prepareStatement(movieListQuery))
                 {
                     ResultSet rs = movieListStatement.executeQuery();
@@ -268,6 +270,10 @@ public class MovieList extends HttpServlet {
                                 genreStringBuilder.append(genreName);
                             }
                             String movie_genre = genreStringBuilder.toString();
+                            if(movie_genre.isBlank() || movie_genre == null || movie_genre.isEmpty())
+                            {
+                                movie_genre = "N/A";
+                            }
                             jsonObject.addProperty("movie_genre", movie_genre);
                         }
 
@@ -291,9 +297,13 @@ public class MovieList extends HttpServlet {
                                 starStringBuilder.append(starName);
                             }
                             String movie_star = starStringBuilder.toString();
+                            if(movie_star.isBlank() || movie_star == null || movie_star.isEmpty())
+                            {
+                                movie_star = "N/A";
+                            }
                             jsonObject.addProperty("movie_star", movie_star);
-                            jsonArray.add(jsonObject);
                         }
+                        jsonArray.add(jsonObject);
                     }
                 }
                 request.getServletContext().log("getting " + jsonArray.size() + " results");
