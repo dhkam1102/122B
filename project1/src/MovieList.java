@@ -329,8 +329,9 @@ public class MovieList extends HttpServlet {
             {
                 StringBuilder mid_query = new StringBuilder();
                 mid_query.append("SELECT m.id AS movie_id ");
-                mid_query.append("FROM movies m JOIN ratings r ON m.id = r.movieId JOIN stars_in_movies sim ON m.id = sim.movieId ");
+                mid_query.append("FROM movies m JOIN stars_in_movies sim ON m.id = sim.movieId ");
                 mid_query.append("JOIN stars s ON sim.starId = s.id ");
+                mid_query.append("LEFT JOIN ratings r ON m.id = r.movieId ");
                 mid_query.append("WHERE 1=1 "); // Start with a true condition to simplify subsequent ANDs
 
                 if (year != null && !year.isEmpty()) {
@@ -346,13 +347,15 @@ public class MovieList extends HttpServlet {
                     mid_query.append("AND m.title LIKE '%").append(title).append("% ' ");
                 }
                 String mid_query_string = mid_query.toString();
+                orderClause = orderClause.replace("rating", "COALESCE(r.rating, 0.0)");
                 String midQuery = mid_query_string + orderClause + " LIMIT " + page_size + " OFFSET " + offset;
                 JsonArray jsonArray = new JsonArray();
                 try(PreparedStatement midGetQuery = conn.prepareStatement(midQuery))
                 {
                     JsonObject jsonObject = new JsonObject();
                     ResultSet result = midGetQuery.executeQuery();
-                    while (result.next()) {
+                    while (result.next())
+                    {
                         String movieId = result.getString("movie_id");
                         String movieInfoQuery = "SELECT m.id AS movie_id, m.title, m.year, m.director, COALESCE(r.rating, 0.0) AS rating " +
                                 "FROM movies m " +
