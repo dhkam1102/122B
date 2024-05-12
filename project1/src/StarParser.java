@@ -53,7 +53,7 @@ public class StarParser extends DefaultHandler {
 
         String loginUser = "mytestuser";
         String loginPasswd = "My6$Password";
-        String loginUrl = "jdbc:mysql://localhost:3306/parsing";
+        String loginUrl = "jdbc:mysql://localhost:3306/moviedb";
 
         try (FileWriter starWriter = new FileWriter(starFile);
              FileWriter starInMoviesWriter = new FileWriter(starInMoviesFile)) {
