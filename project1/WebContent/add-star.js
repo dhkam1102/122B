@@ -24,7 +24,7 @@ $(document).ready(function() {
                     response = [response]
                     console.log("hello");
                 }
-                if (response.errorMessage) {
+                if (response[0].errorMessage) {
                     alert("ERROR in adding star: " + response.errorMessage);
                 }
                 else {
