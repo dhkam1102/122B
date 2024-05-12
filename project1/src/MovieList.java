@@ -137,9 +137,19 @@ public class MovieList extends HttpServlet {
                     while(result.next())
                     {
                         String genreId = result.getString(1);
-                        String movieListQuery = "SELECT DISTINCT m.id as movie_id, m.title, m.year, m.director, r.rating " +
-                                "FROM movies AS m, ratings as r, genres_in_movies AS gim " +
-                                "WHERE m.id = r.movieId AND gim.genreId = ? AND gim.movieId = m.id" + orderClause + "LIMIT " + page_size + " OFFSET " + offset;
+                        String movieListQuery = "SELECT DISTINCT " +
+                            "m.id AS movie_id, " +
+                            "m.title, " +
+                            "m.year, " +
+                            "m.director, " +
+                            "COALESCE(r.rating, 0.0) AS rating " +
+                            "FROM movies AS m " +
+                            "JOIN genres_in_movies AS gim ON m.id = gim.movieId " +
+                            "LEFT JOIN ratings AS r ON m.id = r.movieId " +
+                            "WHERE gim.genreId = ? " + // Placeholder for genre ID
+                            orderClause + " " + // Inject order clause
+                            "LIMIT " + page_size + " " + // Inject page size
+                            "OFFSET " + offset; // Inject offset
                         try(PreparedStatement movieListStatement = conn.prepareStatement(movieListQuery))
                         {
                             movieListStatement.setString(1, genreId);
