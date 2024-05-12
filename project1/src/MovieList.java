@@ -154,7 +154,13 @@ public class MovieList extends HttpServlet {
                                 String movie_title = rs.getString("m.title");
                                 String movie_year = rs.getString("m.year");
                                 String movie_director = rs.getString("m.director");
-                                String movie_rating = rs.getString("rating");
+                                String movie_rating_str = rs.getString("rating");
+                                String movie_rating = null;
+                                if (movie_rating_str != null) {
+                                    double movie_rating_double = Double.parseDouble(movie_rating_str);
+                                    double rounded_rating = Math.round(movie_rating_double * 10.0) / 10.0;
+                                    movie_rating = String.format("%.1f", rounded_rating);
+                                }
 
                                 jsonObject.addProperty("movie_id", movie_id);
                                 jsonObject.addProperty("movie_title", movie_title);
@@ -248,7 +254,13 @@ public class MovieList extends HttpServlet {
                         String movie_title = rs.getString("m.title");
                         String movie_year = rs.getString("m.year");
                         String movie_director = rs.getString("m.director");
-                        String movie_rating = rs.getString("rating");
+                        String movie_rating_str = rs.getString("rating");
+                        String movie_rating = null;
+                        if (movie_rating_str != null) {
+                            double movie_rating_double = Double.parseDouble(movie_rating_str);
+                            double rounded_rating = Math.round(movie_rating_double * 10.0) / 10.0;
+                            movie_rating = String.format("%.1f", rounded_rating);
+                        }
 
                         jsonObject.addProperty("movie_id", movie_id);
                         jsonObject.addProperty("movie_title", movie_title);
