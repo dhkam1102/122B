@@ -24,6 +24,7 @@ public class AddStar extends HttpServlet {
         String starName = request.getParameter("starName");
         String starBirthYear = request.getParameter("starBirthYear");
 
+        JsonArray jsonArray = new JsonArray();
         try {
             Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/moviedb", "mytestuser", "My6$Password");
 
@@ -48,12 +49,28 @@ public class AddStar extends HttpServlet {
                 insertionStatement.setString(3, starBirthYear);
                 System.out.println(insertionQuery);
                 insertionStatement.executeUpdate();
-            }
 
-            conn.close();
-            out.println("Star added successfully!");
+                JsonObject jsonObject = new JsonObject();
+                String SnewId = Integer.toString(newId);
+                System.out.println(SnewId);
+                jsonObject.addProperty("id", "insert"+SnewId);
+                System.out.println(starName);
+
+                jsonObject.addProperty("name", starName);
+                System.out.println(starBirthYear);
+
+                jsonObject.addProperty("birthYear", starBirthYear);
+                jsonArray.add(jsonObject);
+
+                conn.close();
+                out.println(jsonArray.toString());
+            }
         } catch (SQLException e) {
-            out.println("Error adding star: " + e.getMessage());
+            JsonObject errorObject = new JsonObject();
+            errorObject.addProperty("errorMessage", "Error adding star: " + e.getMessage());
+            jsonArray.add(errorObject);
+            out.println(jsonArray.toString());
+//            out.println("Error adding star: " + e.getMessage());
         }
     }
 }
