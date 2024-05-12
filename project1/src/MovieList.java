@@ -327,74 +327,107 @@ public class MovieList extends HttpServlet {
             }
             else if (genre.isEmpty() && first_letter.isEmpty())
             {
-//                StringBuilder mid_query = new StringBuilder();
-//                mid_query.append("SELECT m.id AS movie_id ");
-//                mid_query.append("FROM movies m JOIN stars_in_movies sim ON m.id = sim.movieId ");
-//                mid_query.append("JOIN stars s ON sim.starId = s.id ");
-//                mid_query.append("WHERE 1=1 "); // Start with a true condition to simplify subsequent ANDs
-//
-//                if (year != null && !year.isEmpty()) {
-//                    mid_query.append("AND m.year = '").append(year).append("' ");
-//                }
-//                if (director != null && !director.isEmpty()) {
-//                    mid_query.append("AND m.director LIKE '%").append(director).append("%' ");
-//                }
-//                if (name != null && !name.isEmpty()) {
-//                    mid_query.append("AND s.name LIKE '%").append(name).append("%' ");
-//                }
-//                if (title != null && !title.isEmpty()) {
-//                    mid_query.append("AND m.title LIKE '%").append(title).append("%' ");
-//                }
-//                String mid_query_string = mid_query.toString();
-//                PreparedStatement statement2 = conn.prepareStatement(mid_query_string);
-//                ResultSet mid_result = statement2.executeQuery();
-//
-//                List<String> movieIds = new ArrayList<>();
-//                while (mid_result.next()) {
-//                    movieIds.add(mid_result.getString("movie_id"));
-//                }
-//
-//                StringBuilder joiner = new StringBuilder("(");
-//                for (int i = 0; i < movieIds.size(); i++)
-//                {
-//                    if (i > 0) {
-//                        joiner.append(",");
-//                    }
-//                    joiner.append("'");
-//                    joiner.append(movieIds.get(i));
-//                    joiner.append("'");
-//                }
-//                joiner.append(")");
-//                String movie_id_list = joiner.toString();
-//
-//                System.out.println("movie id list" + movie_id_list);
-//
-//                if (!movie_id_list.equals("()"))
-//                {
-//                    StringBuilder queryBuilder = new StringBuilder();
-//                    queryBuilder.append("SELECT COUNT(*) AS row_count, m.id AS movie_id, m.title, m.year, m.director, ");
-//                    queryBuilder.append("SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT g.name ORDER BY g.name SEPARATOR ', '), ', ', 3) AS genres, ");
-//                    queryBuilder.append("SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT s.name ORDER BY star_counts.movies_played DESC, s.name SEPARATOR ', '), ', ', 3) AS stars, ");
-//                    queryBuilder.append("MAX(r.rating) AS rating ");
-//                    queryBuilder.append("FROM movies m ");
-//                    queryBuilder.append("JOIN ratings r ON m.id = r.movieId ");
-//                    queryBuilder.append("JOIN genres_in_movies gim ON m.id = gim.movieId ");
-//                    queryBuilder.append("JOIN genres g ON gim.genreId = g.id ");
-//                    queryBuilder.append("JOIN stars_in_movies sim ON m.id = sim.movieId ");
-//                    queryBuilder.append("JOIN stars s ON sim.starId = s.id ");
-//                    queryBuilder.append("LEFT JOIN (SELECT starId, COUNT(movieId) AS movies_played FROM stars_in_movies GROUP BY starId) AS star_counts ON s.id = star_counts.starId ");
-//                    queryBuilder.append("WHERE ");
-//                    queryBuilder.append("m.id IN ").append(movie_id_list);
-//                    queryBuilder.append(" GROUP BY m.id, m.title, m.year, m.director ");
-//                    queryBuilder.append(orderClause);
-//                    queryBuilder.append(" LIMIT ").append(page_size).append(" OFFSET ").append(offset);
-//                    query = queryBuilder.toString();
-//                }
-//                else
-//                {
-//                    query = "SELECT * FROM movies WHERE 1=0";
-//                }
-//                statement = conn.prepareStatement(query);
+                StringBuilder mid_query = new StringBuilder();
+                mid_query.append("SELECT m.id AS movie_id ");
+                mid_query.append("FROM movies m JOIN stars_in_movies sim ON m.id = sim.movieId ");
+                mid_query.append("JOIN stars s ON sim.starId = s.id ");
+                mid_query.append("WHERE 1=1 "); // Start with a true condition to simplify subsequent ANDs
+
+                if (year != null && !year.isEmpty()) {
+                    mid_query.append("AND m.year = '").append(year).append("' ");
+                }
+                if (director != null && !director.isEmpty()) {
+                    mid_query.append("AND m.director LIKE '%").append(director).append("%' ");
+                }
+                if (name != null && !name.isEmpty()) {
+                    mid_query.append("AND s.name LIKE '%").append(name).append("%' ");
+                }
+                if (title != null && !title.isEmpty()) {
+                    mid_query.append("AND m.title LIKE '%").append(title).append("%' ");
+                }
+                String mid_query_string = mid_query.toString();
+                JsonArray jsonArray = new JsonArray();
+                try(PreparedStatement midGetQuery = conn.prepareStatement(mid_query_string))
+                {
+                    ResultSet rs = midGetQuery.executeQuery();
+                    JsonObject jsonObject = new JsonObject();
+
+                    while (rs.next())
+                    {
+                        String movie_id = rs.getString("movie_id");
+                        String movie_title = rs.getString("m.title");
+                        String movie_year = rs.getString("m.year");
+                        String movie_director = rs.getString("m.director");
+                        String movie_rating_str = rs.getString("rating");
+                        String movie_rating = null;
+                        if (movie_rating_str != null) {
+                            double movie_rating_double = Double.parseDouble(movie_rating_str);
+                            double rounded_rating = Math.round(movie_rating_double * 10.0) / 10.0;
+                            movie_rating = String.format("%.1f", rounded_rating);
+                        }
+
+                        jsonObject.addProperty("movie_id", movie_id);
+                        jsonObject.addProperty("movie_title", movie_title);
+                        jsonObject.addProperty("movie_year", movie_year);
+                        jsonObject.addProperty("movie_director", movie_director);
+                        jsonObject.addProperty("movie_rating", movie_rating);
+
+                        String genreListQuery = "select * from genres as g, genres_in_movies as gim where gim.genreId = g.id AND gim.movieId = ? ORDER BY g.name LIMIT 3";
+                        try(PreparedStatement genreListStatement = conn.prepareStatement(genreListQuery))
+                        {
+                            StringBuilder genreStringBuilder = new StringBuilder();
+                            genreListStatement.setString(1, movie_id);
+                            ResultSet rs2 = genreListStatement.executeQuery();
+                            while (rs2.next()) {
+                                String genreName = rs2.getString("name");
+                                if (genreStringBuilder.length() > 0) {
+                                    genreStringBuilder.append(", ");
+                                }
+                                genreStringBuilder.append(genreName);
+                            }
+                            String movie_genre = genreStringBuilder.toString();
+                            if(movie_genre.isBlank() || movie_genre == null || movie_genre.isEmpty())
+                            {
+                                movie_genre = "N/A";
+                            }
+                            jsonObject.addProperty("movie_genre", movie_genre);
+                        }
+
+                        String starListQuery = "SELECT s.id, s.name, COUNT(sim.movieId) AS total_count " +
+                                "FROM (SELECT DISTINCT starId FROM stars_in_movies WHERE movieId = ?) AS distinct_stars " +
+                                "JOIN stars AS s ON distinct_stars.starId = s.id " +
+                                "JOIN stars_in_movies AS sim ON s.id = sim.starId " +
+                                "GROUP BY s.id, s.name " +
+                                "ORDER BY total_count DESC, s.name ASC " +
+                                "LIMIT 3";
+                        try(PreparedStatement starListStatement = conn.prepareStatement(starListQuery))
+                        {
+                            StringBuilder starStringBuilder = new StringBuilder();
+                            starListStatement.setString(1, movie_id);
+                            ResultSet rs2 = starListStatement.executeQuery();
+                            while (rs2.next()) {
+                                String starName = rs2.getString("name");
+                                if (starStringBuilder.length() > 0) {
+                                    starStringBuilder.append(", ");
+                                }
+                                starStringBuilder.append(starName);
+                            }
+                            String movie_star = starStringBuilder.toString();
+                            if(movie_star.isBlank() || movie_star == null || movie_star.isEmpty())
+                            {
+                                movie_star = "N/A";
+                            }
+                            jsonObject.addProperty("movie_star", movie_star);
+                        }
+                        jsonArray.add(jsonObject);
+                    }
+                }
+                request.getServletContext().log("getting " + jsonArray.size() + " results");
+
+                // Write JSON string to output
+                out.write(jsonArray.toString());
+                // Set response status to 200 (OK)
+                response.setStatus(200);
             }
         }
         catch (Exception e)
