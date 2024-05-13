@@ -188,37 +188,53 @@ public class StarParser extends DefaultHandler {
             conn.setAutoCommit(false);
 
             try (PreparedStatement checkExistence = conn.prepareStatement("SELECT id, name, birthYear FROM stars WHERE name = ?")) {
-                for (Star star : starMap.values()) {
-                    if (star.getName() != null && star.getId() != null && !star.getName().trim().isEmpty()) {
-                        checkExistence.setString(1, star.getName());
-                        try (ResultSet rs = checkExistence.executeQuery()) {
-                            boolean foundMatch = false;
-                            while (rs.next()) {
-                                int dbBirthYear = rs.getInt("birthYear");
-                                String dbName = rs.getString("name");
-                                if (star.getBirthYear() == 0 && rs.wasNull()) {
-                                    star.setId(rs.getString("id"));
-                                    foundMatch = true;
-                                    break;
-                                }
-                                else if (star.getBirthYear() == 0 && !rs.wasNull()) {
-                                    star.setId(rs.getString("id"));
-                                    star.setBirthYear(dbBirthYear);
-                                    foundMatch = true;
-                                    break;
-                                }
-                                else if (star.getBirthYear() == dbBirthYear && star.getName().equalsIgnoreCase(dbName)) {
-                                    star.setId(rs.getString("id"));
-                                    star.setBirthYear(dbBirthYear);
-                                    foundMatch = true;
-                                    break;
-                                }
+                try(FileWriter inconsistencyStarWriter = new FileWriter("inconsistencyStar.txt", true)) {
+                    for (Star star : starMap.values()) {
+                        if (star.getName() == null || star.getId() == null || !star.getName().trim().isEmpty()) {
+                            if (star.getName() == null) {
+                                inconsistencyStarWriter.write("row dropped due to <firstname> and <familyname> are empty, <stagename> value: " + star.getStageName() + "\n");
                             }
-                            filteredStars.add(star);
+                            else if ("0".equals(star.getId())) {
+                                inconsistencyStarWriter.write("<a> from casts124.xml not found in <stagename> from actors63.xml, value <a> = "+ star.getStageName() + "\n");
+                            }
+                        }
+
+                        if (star.getName() != null && star.getId() != null && !star.getName().trim().isEmpty()) {
+                            checkExistence.setString(1, star.getName());
+                            try (ResultSet rs = checkExistence.executeQuery()) {
+                                boolean foundMatch = false;
+                                while (rs.next()) {
+                                    int dbBirthYear = rs.getInt("birthYear");
+                                    String dbName = rs.getString("name");
+                                    if (star.getBirthYear() == 0 && rs.wasNull()) {
+                                        star.setId(rs.getString("id"));
+                                        foundMatch = true;
+                                        break;
+                                    }
+                                    else if (star.getBirthYear() == 0 && !rs.wasNull()) {
+                                        star.setId(rs.getString("id"));
+                                        star.setBirthYear(dbBirthYear);
+                                        foundMatch = true;
+                                        break;
+                                    }
+                                    else if (star.getBirthYear() == dbBirthYear && star.getName().equalsIgnoreCase(dbName)) {
+                                        star.setId(rs.getString("id"));
+                                        star.setBirthYear(dbBirthYear);
+                                        foundMatch = true;
+                                        break;
+                                    }
+                                }
+                                filteredStars.add(star);
+                            }
                         }
                     }
+                    conn.commit();
                 }
-                conn.commit();
+                catch (IOException e) {
+                    System.err.println("Error writing to inconsistency file");
+                    e.printStackTrace();
+                }
+
             } catch (Exception e) {
                 conn.rollback();
                 throw e;
@@ -235,8 +251,10 @@ public class StarParser extends DefaultHandler {
         StarParser parser = new StarParser();
         parser.parseDocument("src/stanford-movies/actors63.xml", true); // Parse actors
         parser.parseDocument("src/stanford-movies/casts124.xml", false); // Parse casts
+
+//        System.out.println("this is the inconsistency data mad during parsing actors63.xml and casts124.xml");
         List<Star> stars = parser.getStars();
-        stars.forEach(System.out::println);
+//        stars.forEach(System.out::println);
 //        System.out.println("from here I will start the insertion part =======================");
         parser.addData(stars);
 
