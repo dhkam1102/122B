@@ -36,10 +36,10 @@ Movie Title = m.title LIKE '%TITLE%'
 
 - **stored-procedure.sql outside of the project1 Folder**
 - [View the stored-procedure.sql](stored-procedure.sql)
-- 
+  
 ## Prepared Statements.
 
-1. AddStar, EmployeeLogin, LoginServlet, MainPage, MetaData, MovieList, SingleMovie, SingleStar
+- AddStar, EmployeeLogin, LoginServlet, MainPage, MetaData, MovieList, SingleMovie, SingleStar
 
 ### Parsing Time Optimization
 
