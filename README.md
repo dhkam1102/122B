@@ -42,16 +42,13 @@ Movie Title = m.title LIKE '%TITLE%'
 
 3. **Creating Classes for Itemizing Tree Structure:** For each XML parsing, create classes for itemizing tree structure to reduce the time to retrieve items since it does not insert each time.
 
-### Mapping Strategies
+4. **Obtaining O(1) Retrieval:** Use `HashMap` appropriately for O(1) retrieval of parsed data from classes.
 
-- **Obtaining O(1) Retrieval:** Use `HashMap` appropriately for O(1) retrieval of parsed data from classes.
-
-### Query Optimization
-
-- **Using Prepared Statements:** Use Prepared Statements for every query.
+5. **Using Prepared Statements:** Use Prepared Statements for every query.
 
 ## Additional Reports and Files
 
+- **inconsistencyMovie.txt**
 - [View the Inconsistency Movie Report](/cs122b-s24-team-49/project1/inconsistencyMovie.txt)
+- **inconsistencyStar.txt**
 - [View the Inconsistency Star Report](/path/to/inconsistencyStar.txt)
-- [View the Star Database](/path/to/stars_in_movies.csv)
