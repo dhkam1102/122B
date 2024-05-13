@@ -93,13 +93,8 @@ public class Main243Parser extends DefaultHandler {
                     List<String> genre_list = director.getMovieGenreList(movieID);
                     for (String genre : genre_list)
                     {
-                        if(genre.equals("") || genre.isEmpty() || genre.isBlank() || genre == null)
-                        {
-                            genre = "Undefined";
-                        }
                         Integer genreID = getGenreId(conn, genre);
                         genresInMoviesWriter.write(String.format("%d,%s\n", genreID, movieID));
-
                     }
                 }
 //                conn.commit();
@@ -167,77 +162,150 @@ public class Main243Parser extends DefaultHandler {
 
     public void endElement(String uri, String localName, String qName) throws SAXException
     {
-        if (qName.equalsIgnoreCase("directorfilms"))
-        {
-            //add it to the list
-            if(tempDirector.getDirectorName() != null)
+        try(FileWriter inconsistencyMovieWriter = new FileWriter("inconsistencyMovie.txt", true)) {
+            if (qName.equalsIgnoreCase("directorfilms"))
             {
-                directors.add(tempDirector);
-            }
-        }
-        else if (qName.equalsIgnoreCase("dirname"))
-        {
-            if((tempVal.isEmpty()) || (tempVal == null) || tempVal.isBlank())
-            {
-                tempVal = "Unknown";
-            }
-
-            for (Director director : this.directors)
-            {
-                if (director.getDirectorName().equals(tempVal))
+                //add it to the list
+                if(tempDirector.getDirectorName() != null)
                 {
-                    tempDirector = director;
-                    break;
+                    directors.add(tempDirector);
                 }
             }
+            else if (qName.equalsIgnoreCase("dirid"))
+            {
+                //add it to the list
+                tempDirector.setDirectorId(tempVal);
+            }
+            else if (qName.equalsIgnoreCase("dirname"))
+            {
+                String realVal = "";
+                if((tempVal.isEmpty()) || (tempVal == null) || tempVal.isBlank())
+                {
+                    realVal = "NULL";
+                    tempVal = "Unknown";
+                }
 
-            tempDirector.setDirectorName(tempVal);
-        }
-        else if (qName.equalsIgnoreCase("fid"))
-        {
-            if(tempVal.isEmpty() || tempVal == null || tempVal.isBlank())
+                for (Director director : this.directors)
+                {
+                    if (director.getDirectorName().equals(tempVal))
+                    {
+                        tempDirector = director;
+                        break;
+                    }
+                }
+
+                tempDirector.setDirectorName(tempVal);
+                if(tempVal.equals("UnKnown"))
+                {
+                    String directorId = tempDirector.getDirectorId();
+                    inconsistencyMovieWriter.write("Inconsistency Report Where Director Id <dirid>: " + directorId + ", Tag: <dirname>, Value: " + realVal + " Set as: " + tempVal + ".\n");
+                }
+            }
+            else if (qName.equalsIgnoreCase("fid"))
             {
-                tempVal = "Unknown" + unknown_num;
-                unknown_num ++;
+                String realVal = "";
+                if(tempVal.isEmpty() || tempVal == null || tempVal.isBlank())
+                {
+                    realVal = "NULL";
+                    tempVal = "Unknown" + unknown_num;
+                    unknown_num ++;
+                }
+                List <String> movie_ID_list = tempDirector.getMovieIDList();
+                if(!movie_ID_list.contains(tempVal))
+                {
+                    tempDirector.addMovieID(tempVal);
+                }
+                if(tempVal.contains("UnKnown"))
+                {
+                    String directorId = tempDirector.getDirectorId();
+                    inconsistencyMovieWriter.write("Inconsistency Report Where Director Id <dirid>: " + directorId + ", Tag: <fid>, Value: " + realVal + " Set as: " + tempVal + ".\n");
+                }
             }
-            List <String> movie_ID_list = tempDirector.getMovieIDList();
-            if(!movie_ID_list.contains(tempVal))
+            else if (qName.equalsIgnoreCase("t"))
             {
-                tempDirector.addMovieID(tempVal);
+                String realVal = "";
+                if(tempVal.isEmpty() || tempVal == null || tempVal.isBlank())
+                {
+                    realVal = "NULL";
+                }
+                String movieID = tempDirector.getLastAddedMovieID();
+                tempDirector.addMovieIDMovie(movieID, tempVal);
+                if(tempVal.isEmpty() || tempVal == null || tempVal.isBlank())
+                {
+                    String directorId = tempDirector.getDirectorId();
+                    inconsistencyMovieWriter.write("Inconsistency Report Where Director Id <dirid>: " + directorId + ", Tag: <t>, Value: " + realVal + " Ignored this case.\n");
+                }
+            }
+            else if (qName.equalsIgnoreCase("year"))
+            {
+                String movieID = tempDirector.getLastAddedMovieID();
+                try {
+                    int year = Integer.parseInt(tempVal);
+                    tempDirector.addMovieYear(movieID, year);
+                } catch (NumberFormatException e) {
+                    tempDirector.addMovieYear(movieID, -1);
+                    String realVal = "";
+                    if(tempVal.isEmpty() || tempVal == null || tempVal.isBlank())
+                    {
+                        realVal = "NULL";
+                    }
+                    else
+                    {
+                        realVal = tempVal;
+                    }
+                    String directorId = tempDirector.getDirectorId();
+                    inconsistencyMovieWriter.write("Inconsistency Report Where Director Id <dirid>: " + directorId + ", Tag: <year>, Value: " + realVal + " Set as: -1.\n");
+                }
+            }
+            else if (qName.equalsIgnoreCase("released"))
+            {
+                String movieID = tempDirector.getLastAddedMovieID();
+                try {
+                    int year = Integer.parseInt(tempVal);
+                    tempDirector.addMovieYear(movieID, year);
+                } catch (NumberFormatException e) {
+                    tempDirector.addMovieYear(movieID, -1);
+                    String realVal = "";
+                    if(tempVal.isEmpty() || tempVal == null || tempVal.isBlank())
+                    {
+                        realVal = "NULL";
+                    }
+                    else
+                    {
+                        realVal = tempVal;
+                    }
+
+                    String directorId = tempDirector.getDirectorId();
+                    inconsistencyMovieWriter.write("Inconsistency Report Where Director Id <dirid>: " + directorId + ", Tag: <released>, Value: " + realVal + " Set as: -1.\n");
+                }
+            }
+            else if (qName.equalsIgnoreCase("cat"))
+            {
+                String realVal = "";
+                if(tempVal.isEmpty() || tempVal == null || tempVal.isBlank())
+                {
+                    realVal = "NULL";
+                    tempVal = "Undefined";
+                }
+                else
+                {
+                    realVal = tempVal;
+                }
+                String movieID = tempDirector.getLastAddedMovieID();
+                tempDirector.addGenreToMovie(movieID, tempVal);
+
+                if(tempVal.equals("Undefined"))
+                {
+                    String directorId = tempDirector.getDirectorId();
+                    inconsistencyMovieWriter.write("Inconsistency Report Where Director Id <dirid>: " + directorId + ", Tag: <cat>, Value: " + realVal + " Set as: Undefined.\n");
+                }
             }
         }
-        else if (qName.equalsIgnoreCase("t"))
-        {
-            String movieID = tempDirector.getLastAddedMovieID();
-            tempDirector.addMovieIDMovie(movieID, tempVal);
+        catch (IOException e) {
+            System.err.println("Error writing to inconsistency file");
+            e.printStackTrace();
         }
-        else if (qName.equalsIgnoreCase("year"))
-        {
-            String movieID = tempDirector.getLastAddedMovieID();
-            try {
-                int year = Integer.parseInt(tempVal);
-                tempDirector.addMovieYear(movieID, year);
-            } catch (NumberFormatException e) {
-                System.out.println("bump1");
-                tempDirector.addMovieYear(movieID, -1);
-            }
-        }
-        else if (qName.equalsIgnoreCase("released"))
-        {
-            String movieID = tempDirector.getLastAddedMovieID();
-            try {
-                int year = Integer.parseInt(tempVal);
-                tempDirector.addMovieYear(movieID, year);
-            } catch (NumberFormatException e) {
-                System.out.println("bump2");
-                tempDirector.addMovieYear(movieID, -1);
-            }
-        }
-        else if (qName.equalsIgnoreCase("cat"))
-        {
-            String movieID = tempDirector.getLastAddedMovieID();
-            tempDirector.addGenreToMovie(movieID, tempVal);
-        }
+
     }
 
     public static void main(String[] args) {

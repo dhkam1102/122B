@@ -6,6 +6,7 @@ import java.util.Map;
 
 public class Director {
     private String director_name;
+    private String director_id;
     private List<String> movieID_list;
     private Map<String, String> movieID_movie_map;
     private Map<String, Integer> movieID_year_map;
@@ -33,6 +34,14 @@ public class Director {
 
     public void setDirectorName(String director_name) {
         this.director_name = director_name;
+    }
+
+    public String getDirectorId() {
+        return director_id;
+    }
+
+    public void setDirectorId(String director_id) {
+        this.director_id = director_id;
     }
 
     public List<String> getMovieIDList() {
