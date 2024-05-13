@@ -32,7 +32,14 @@ Star Name = s.name LIKE '%NAME%'
 Movie Title = m.title LIKE '%TITLE%'
 ```
 
-## Optimization Strategies
+## stored-procedure.sql.
+
+- **stored-procedure.sql outside of the project1 Folder**
+- [View the stored-procedure.sql](stored-procedure.sql)
+- 
+## Prepared Statements.
+
+1. AddStar, EmployeeLogin, LoginServlet, MainPage, MetaData, MovieList, SingleMovie, SingleStar
 
 ### Parsing Time Optimization
 
