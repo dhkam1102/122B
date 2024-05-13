@@ -138,11 +138,11 @@ public class MovieList extends HttpServlet {
                     {
                         String genreId = result.getString(1);
                         String movieListQuery = "SELECT DISTINCT m.id AS movie_id, m.title, m.year, m.director, COALESCE(r.rating, 0.0) AS rating " +
-                            "FROM movies AS m " +
-                            "JOIN genres_in_movies AS gim ON m.id = gim.movieId " +
-                            "LEFT JOIN ratings AS r ON m.id = r.movieId " +
-                            "WHERE gim.genreId = ? " + // Placeholder for genre ID
-                            orderClause + " LIMIT " + page_size + " OFFSET " + offset;// Inject order clause
+                                "FROM movies AS m " +
+                                "JOIN genres_in_movies AS gim ON m.id = gim.movieId " +
+                                "LEFT JOIN ratings AS r ON m.id = r.movieId " +
+                                "WHERE gim.genreId = ? " + // Placeholder for genre ID
+                                orderClause + " LIMIT " + page_size + " OFFSET " + offset;// Inject order clause
                         try(PreparedStatement movieListStatement = conn.prepareStatement(movieListQuery))
                         {
                             movieListStatement.setString(1, genreId);
@@ -338,15 +338,16 @@ public class MovieList extends HttpServlet {
                     mid_query.append("AND m.year = '").append(year).append("' ");
                 }
                 if (director != null && !director.isEmpty()) {
-                    mid_query.append("AND m.director LIKE '%").append(director).append("%' ");
+                    mid_query.append("AND m.director LIKE '%").append(director).append("%'");
                 }
                 if (name != null && !name.isEmpty()) {
-                    mid_query.append("AND s.name LIKE '%").append(name).append("%' ");
+                    mid_query.append("AND s.name LIKE '%").append(name).append("%'");
                 }
                 if (title != null && !title.isEmpty()) {
-                    mid_query.append("AND m.title LIKE '%").append(title).append("% ' ");
+                    mid_query.append("AND m.title LIKE '%").append(title).append("%'");
                 }
                 String mid_query_string = mid_query.toString();
+                System.out.println(mid_query_string);
                 orderClause = orderClause.replace("rating", "COALESCE(r.rating, 0.0)");
                 String midQuery = mid_query_string + orderClause + " LIMIT " + page_size + " OFFSET " + offset;
                 JsonArray jsonArray = new JsonArray();
