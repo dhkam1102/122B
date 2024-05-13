@@ -51,4 +51,4 @@ Movie Title = m.title LIKE '%TITLE%'
 - **inconsistencyMovie.txt**
 - [View the Inconsistency Movie Report](/cs122b-s24-team-49/project1/inconsistencyMovie.txt)
 - **inconsistencyStar.txt**
-- [View the Inconsistency Star Report](/path/to/inconsistencyStar.txt)
+- [View the Inconsistency Star Report](/cs122b-s24-team-49/project1/inconsistencyStar.txt)
