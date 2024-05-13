@@ -29,7 +29,7 @@ public class LoginFilter implements Filter {
             return;
         }
         String url = httpRequest.getRequestURI();
-        if(url.endsWith("/_dashboard"))
+        if(url.endsWith("/_dashboard") && httpRequest.getSession().getAttribute("user") == null)
         {
             httpResponse.sendRedirect("_dashboard.html");
         }
@@ -38,8 +38,15 @@ public class LoginFilter implements Filter {
             // Redirect to login page if the "user" attribute doesn't exist in session
             if (httpRequest.getSession().getAttribute("user") == null) {
                 httpResponse.sendRedirect("login.html");
-            } else {
-                chain.doFilter(request, response);
+            }
+            else {
+                if(url.endsWith("/_dashboard"))
+                {
+                    httpResponse.sendRedirect("index.html");
+                }
+                else {
+                    chain.doFilter(request, response);
+                }
             }
         }
     }
