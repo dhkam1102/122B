@@ -1,5 +1,7 @@
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +11,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import org.xml.sax.helpers.DefaultHandler;
@@ -43,10 +46,14 @@ public class Main243Parser extends DefaultHandler {
         try {
 
             //get a new instance of parser
+//            SAXParser sp = spf.newSAXParser();
             SAXParser sp = spf.newSAXParser();
-
+            FileInputStream fis = new FileInputStream("src/stanford-movies/mains243.xml");
+            InputStreamReader isr = new InputStreamReader(fis, "ISO-8859-1");
+            InputSource inputSource = new InputSource(isr);
+            inputSource.setEncoding("ISO-8859-1");
             //parse the file and also register this class for call backs
-            sp.parse("src/stanford-movies/mains243.xml", this);
+            sp.parse(inputSource, this);
 
         } catch (SAXException se) {
             se.printStackTrace();
