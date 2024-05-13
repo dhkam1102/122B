@@ -328,7 +328,7 @@ public class MovieList extends HttpServlet {
             else if (genre.isEmpty() && first_letter.isEmpty())
             {
                 StringBuilder mid_query = new StringBuilder();
-                mid_query.append("SELECT m.id AS movie_id ");
+                mid_query.append("SELECT DISTINCT m.id AS movie_id, m.title, COALESCE(r.rating, 0.0) AS rating ");
                 mid_query.append("FROM movies m JOIN stars_in_movies sim ON m.id = sim.movieId ");
                 mid_query.append("JOIN stars s ON sim.starId = s.id ");
                 mid_query.append("LEFT JOIN ratings r ON m.id = r.movieId ");
@@ -350,6 +350,7 @@ public class MovieList extends HttpServlet {
                 System.out.println(mid_query_string);
                 orderClause = orderClause.replace("rating", "COALESCE(r.rating, 0.0)");
                 String midQuery = mid_query_string + orderClause + " LIMIT " + page_size + " OFFSET " + offset;
+                System.out.println(midQuery);
                 JsonArray jsonArray = new JsonArray();
                 try(PreparedStatement midGetQuery = conn.prepareStatement(midQuery))
                 {
