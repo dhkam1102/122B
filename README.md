@@ -3,11 +3,9 @@
 ## Team-49 
 
 ### Brian Kam (bdkam@uci.edu)
-- **login page**, **payment page**, **Video Recording**
-- **task 1, 4**
+- **task 2, 5, README, Creating txt, Video Recording**
 ### Seung Yup Yum (syyum@uci.edu)
-- **Main page**, **Main page sorting**, **Video Recording**, **html visual appearnce**
-- **task 2,3**
+- **task 1, 3, 4, 5**
 
 ### Project Demonstration Video
 - **Watch Here**: [View the Project Demo](https://drive.google.com/file/d/1Xz_q58SkOkxV3fFuK8Qx0CKWHx-lOLzb/view?usp=sharing)
@@ -33,3 +31,27 @@ Director Name = m.director LIKE '%NAME%'
 Star Name = s.name LIKE '%NAME%'
 Movie Title = m.title LIKE '%TITLE%'
 ```
+
+## Optimization Strategies
+
+### Parsing Time Optimization
+
+1. **Using MySQL LOAD Statement:** Place parsing results into CSV files (`stars.csv`, `stars_in_movies.csv`, `movies.csv`, `genres_in_movies.csv`) and load them into the database by running `RunParsing.java`.
+
+2. **Using SAX Parser:** Use SAX parser instead of DOM parser to reduce the time to build the whole tree for big XML documents.
+
+3. **Creating Classes for Itemizing Tree Structure:** For each XML parsing, create classes for itemizing tree structure to reduce the time to retrieve items since it does not insert each time.
+
+### Mapping Strategies
+
+- **Obtaining O(1) Retrieval:** Use `HashMap` appropriately for O(1) retrieval of parsed data from classes.
+
+### Query Optimization
+
+- **Using Prepared Statements:** Use Prepared Statements for every query.
+
+## Additional Reports and Files
+
+- [View the Inconsistency Movie Report](/cs122b-s24-team-49/project1/inconsistencyMovie.txt)
+- [View the Inconsistency Star Report](/path/to/inconsistencyStar.txt)
+- [View the Star Database](/path/to/stars_in_movies.csv)
