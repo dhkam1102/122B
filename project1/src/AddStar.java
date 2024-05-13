@@ -23,8 +23,22 @@ public class AddStar extends HttpServlet {
 
         String starName = request.getParameter("starName");
         String starBirthYear = request.getParameter("starBirthYear");
-
         JsonArray jsonArray = new JsonArray();
+
+        Integer birthYear = null;
+        try {
+            birthYear = Integer.parseInt(starBirthYear);
+        }
+        catch (NumberFormatException e) {
+            JsonObject errorJson = new JsonObject();
+            errorJson.addProperty("errorMessage", "Invalid birth year format.");
+            jsonArray.add(errorJson);
+            out.println(jsonArray.toString());
+            return;
+        }
+
+
+
         try {
             Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/moviedb", "mytestuser", "My6$Password");
 
