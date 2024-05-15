@@ -338,13 +338,25 @@ public class MovieList extends HttpServlet {
                     mid_query.append("AND m.year = '").append(year).append("' ");
                 }
                 if (director != null && !director.isEmpty()) {
-                    mid_query.append("AND m.director LIKE '%").append(director).append("%'");
+                    mid_query.append("AND m.director LIKE '%").append(director).append("%' ");
                 }
                 if (name != null && !name.isEmpty()) {
-                    mid_query.append("AND s.name LIKE '%").append(name).append("%'");
+                    mid_query.append("AND s.name LIKE '%").append(name).append("%' ");
                 }
                 if (title != null && !title.isEmpty()) {
-                    mid_query.append("AND m.title LIKE '%").append(title).append("%'");
+                    mid_query.append("AND MATCH (m.title) AGAINST ('");
+                    String[] keywords = title.split("\\s+");
+
+                    for (int i = 0; i < keywords.length; i++)
+                    {
+                        String keyword = keywords[i];
+                        String word = "+" + keyword + "*";
+                        if (i < keywords.length - 1) {
+                            word += " ";
+                        }
+                        mid_query.append(word);
+                    }
+                    mid_query.append("' IN BOOLEAN MODE) ");
                 }
                 String mid_query_string = mid_query.toString();
                 System.out.println(mid_query_string);
