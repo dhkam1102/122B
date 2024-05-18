@@ -341,8 +341,19 @@ public class MovieList extends HttpServlet {
                     mid_query.append("AND m.director LIKE '%").append(director).append("%' ");
                 }
                 if (name != null && !name.isEmpty()) {
-                    mid_query.append("AND s.name LIKE '%").append(name).append("%' ");
+                    mid_query.append("AND MATCH (s.name) AGAINST ('");
+                    String[] nameKeywords = name.split("\\s+");
+                    for (int i = 0; i < nameKeywords.length; i++) {
+                        String keyword = nameKeywords[i];
+                        String word = "+" + keyword + "*";
+                        if (i < nameKeywords.length - 1) {
+                            word += " ";
+                        }
+                        mid_query.append(word);
+                    }
+                    mid_query.append("' IN BOOLEAN MODE) ");
                 }
+
                 if (title != null && !title.isEmpty()) {
                     mid_query.append("AND MATCH (m.title) AGAINST ('");
                     String[] keywords = title.split("\\s+");
