@@ -30,7 +30,7 @@ function handleStarResult(resultData) {
             if (dataIndex < resultData.length) {
                 // Add data as a hyperlink to the cell if there is data available
                 row += "<td><a href='movie-list.html?name=&title=&year=&director=&genre=" + encodeURIComponent(resultData[dataIndex]['genre_name']) + "&letter=&ts=ASC1&rs=DESC2&size=25&page=1'>" + resultData[dataIndex]['genre_name'] + "</a></td>";
-                dataIndex ++;
+                dataIndex++;
             } else {
                 // Add empty cell if no more data is available
                 row += "<td></td>";
@@ -55,15 +55,85 @@ function handleStarResult(resultData) {
     specialCharsTableBodyElement.append(specialCharsRow);
 }
 
+$(document).ready(function() {
+    if (typeof $.fn.autocomplete !== 'function') {
+        console.error('jQuery Autocomplete plugin is not loaded');
+        return;
+    }
 
-/**
- * Once this .js is loaded, following scripts will be executed by the browser
- */
+    function handleLookup(query, doneCallback) {
+        console.log("autocomplete initiated");
+        console.log("sending AJAX request to backend Java Servlet");
 
-// Makes the HTTP GET request and registers on success callback function handleStarResult
-jQuery.ajax({
-    dataType: "json", // Setting return data type
-    method: "GET", // Setting request method
-    url: "api/movies", // Setting request url, which is mapped by StarsServlet in Stars.java
-    success: (resultData) => handleStarResult(resultData) // Setting callback function to handle data returned successfully by the StarsServlet
+        jQuery.ajax({
+            method: "GET",
+            url: "api/movie-list?query=" + escape(query),
+            success: function(data) {
+                handleLookupAjaxSuccess(data, query, doneCallback);
+            },
+            error: function(errorData) {
+                console.log("lookup ajax error");
+                console.log(errorData);
+            }
+        });
+    }
+
+    function handleLookupAjaxSuccess(data, query, doneCallback) {
+        console.log("lookup ajax successful");
+
+        // Check if the data is already an object
+        var jsonData;
+        if (typeof data === "string") {
+            try {
+                jsonData = JSON.parse(data);
+            } catch (e) {
+                console.error("Parsing error:", e);
+                return;
+            }
+        } else {
+            jsonData = data;
+        }
+
+        console.log(jsonData);
+
+        if (jsonData.error) {
+            console.log("Error(handleLookupAjaxSuccess): " + jsonData.error);
+        } else {
+            doneCallback({ suggestions: jsonData });
+        }
+    }
+
+    function handleSelectSuggestion(suggestion) {
+        console.log("you select " + suggestion["value"] + " with ID " + suggestion["data"]["movieID"]);
+    }
+
+    $('#star_name').autocomplete({
+        lookup: function(query, doneCallback) {
+            handleLookup(query, doneCallback);
+        },
+        onSelect: function(suggestion) {
+            handleSelectSuggestion(suggestion);
+        },
+        deferRequestBy: 300,
+        minChars: 2
+    });
+
+    $('#movie_title').autocomplete({
+        lookup: function(query, doneCallback) {
+            handleLookup(query, doneCallback);
+        },
+        onSelect: function(suggestion) {
+            handleSelectSuggestion(suggestion);
+        },
+        deferRequestBy: 300,
+        minChars: 2
+    });
+
+    // Makes the HTTP GET request and registers on success callback function handleStarResult
+    jQuery.ajax({
+        dataType: "json", // Setting return data type
+        method: "GET", // Setting request method
+        url: "api/movies", // Setting request url, which is mapped by StarsServlet in Stars.java
+        success: (resultData) => handleStarResult(resultData) // Setting callback function to handle data returned successfully by the StarsServlet
+    });
 });
