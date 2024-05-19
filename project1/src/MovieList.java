@@ -44,6 +44,7 @@ public class MovieList extends HttpServlet {
         response.setContentType("application/json"); // Response mime type
         PrintWriter out1 = response.getWriter();
         String query = request.getParameter("query");
+
         if (query != null) {
             handleAutoComplete(query, out1);
         }
@@ -349,20 +350,22 @@ public class MovieList extends HttpServlet {
                         mid_query.append("AND m.director LIKE '%").append(director).append("%' ");
                     }
                     if (name != null && !name.isEmpty()) {
-                        mid_query.append("AND MATCH (s.name) AGAINST ('");
-                        String[] nameKeywords = name.split("\\s+");
-                        for (int i = 0; i < nameKeywords.length; i++) {
-                            String keyword = nameKeywords[i];
-                            String word = "+" + keyword + "*";
-                            if (i < nameKeywords.length - 1) {
-                                word += " ";
-                            }
-                            mid_query.append(word);
-                        }
-                        mid_query.append("' IN BOOLEAN MODE) ");
+                        mid_query.append("AND s.name LIKE '%").append(name).append("%'");
+//                        mid_query.append("AND MATCH (s.name) AGAINST ('");
+//                        String[] nameKeywords = name.split("\\s+");
+//                        for (int i = 0; i < nameKeywords.length; i++) {
+//                            String keyword = nameKeywords[i];
+//                            String word = "+" + keyword + "*";
+//                            if (i < nameKeywords.length - 1) {
+//                                word += " ";
+//                            }
+//                            mid_query.append(word);
+//                        }
+//                        mid_query.append("' IN BOOLEAN MODE) ");
                     }
 
                     if (title != null && !title.isEmpty()) {
+//                        mid_query.append("AND m.title LIKE '%").append(title).append("%'");
                         mid_query.append("AND MATCH (m.title) AGAINST ('");
                         String[] keywords = title.split("\\s+");
 
@@ -377,6 +380,7 @@ public class MovieList extends HttpServlet {
                         }
                         mid_query.append("' IN BOOLEAN MODE) ");
                     }
+
                     String mid_query_string = mid_query.toString();
                     System.out.println(mid_query_string);
                     orderClause = orderClause.replace("rating", "COALESCE(r.rating, 0.0)");
@@ -504,6 +508,7 @@ public class MovieList extends HttpServlet {
     }
 
     private void handleAutoComplete(String query, PrintWriter out) {
+        System.out.println("Query: "+ query);
         JsonArray jsonArray = new JsonArray();
 
         try(Connection conn = dataSource.getConnection()) {
@@ -515,29 +520,35 @@ public class MovieList extends HttpServlet {
                 while (rs.next()) {
                     JsonObject jsonObject = new JsonObject();
                     jsonObject.addProperty("value", rs.getString("title"));
-                    jsonObject.addProperty("data", rs.getInt("id"));
+                    System.out.println("value: " + rs.getString("title"));
+//                    JsonObject dataObject = new JsonObject();
+                    jsonObject.addProperty("data", rs.getString("id"));
+                    System.out.println("data: " + rs.getString("id"));
+
                     jsonArray.add(jsonObject);
                 }
             }
 
-            String starQuery = "SELECT id, name FROM stars WHERE MATCH (name) AGAINST (? IN BOOLEAN MODE) LIMIT 10";
-            try (PreparedStatement statement = conn.prepareStatement(starQuery)) {
-                statement.setString(1, "+" + query.replace(" ", " +") + "*");
-                ResultSet rs = statement.executeQuery();
-
-                while (rs.next()) {
-                    JsonObject jsonObject = new JsonObject();
-                    jsonObject.addProperty("value", rs.getString("name"));
-                    jsonObject.addProperty("data", rs.getInt("id"));
-                    jsonArray.add(jsonObject);
-                }
-            }
+//            String starQuery = "SELECT id, name FROM stars WHERE MATCH (name) AGAINST (? IN BOOLEAN MODE) LIMIT 10";
+//            try (PreparedStatement statement = conn.prepareStatement(starQuery)) {
+//                statement.setString(1, "+" + query.replace(" ", " +") + "*");
+//                ResultSet rs = statement.executeQuery();
+//
+//                while (rs.next()) {
+//                    JsonObject jsonObject = new JsonObject();
+//                    jsonObject.addProperty("value", rs.getString("name"));
+//                    System.out.println("value" + rs.getString("name"));
+//                    jsonObject.addProperty("data", rs.getString("id"));
+//                    System.out.println("data: " + rs.getString("id"));
+//
+//                    jsonArray.add(jsonObject);
+//                }
+//            }
 
             out.write(jsonArray.toString());
         }
         catch(Exception e) {
             JsonObject jsonObject = new JsonObject();
-            //errormessage ㄹㅗ 되어있을수도
             jsonObject.addProperty("error", e.getMessage());
             out.write(jsonObject.toString());
 //            response.setStatus(500);

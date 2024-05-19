@@ -61,8 +61,21 @@ $(document).ready(function() {
         return;
     }
 
+    let MovieId = null;
+    let MovieTitle = null;
+
+
     function handleLookup(query, doneCallback) {
         console.log("autocomplete initiated");
+
+        const savedSuggestions = localStorage.getItem(query);
+        if (savedSuggestions) {
+            console.log("using saved results for this query: " + query);
+            doneCallback({suggestions: JSON.parse(savedSuggestions)});
+            return;
+        }
+
+
         console.log("sending AJAX request to backend Java Servlet");
 
         jQuery.ajax({
@@ -94,7 +107,10 @@ $(document).ready(function() {
             jsonData = data;
         }
 
-        console.log(jsonData);
+        console.log("saving results for query: " + query);
+        localStorage.setItem(query, JSON.stringify(jsonData));
+
+        console.log("saved results:" +jsonData);
 
         if (jsonData.error) {
             console.log("Error(handleLookupAjaxSuccess): " + jsonData.error);
@@ -104,10 +120,15 @@ $(document).ready(function() {
     }
 
     function handleSelectSuggestion(suggestion) {
-        console.log("you select " + suggestion["value"] + " with ID " + suggestion["data"]["movieID"]);
+        console.log("you select " + suggestion["value"] + " with ID " + suggestion["data"]);
+        MovieId = suggestion["data"];
+        MovieTitle = suggestion["value"];
+        // suggestions 클릭하면 바로넘어가게 하는거임
+        window.location.href = "single-movie.html?id=" + suggestion["data"];
+
     }
 
-    $('#star_name').autocomplete({
+    $('#fulltext_search').autocomplete({
         lookup: function(query, doneCallback) {
             handleLookup(query, doneCallback);
         },
@@ -115,18 +136,18 @@ $(document).ready(function() {
             handleSelectSuggestion(suggestion);
         },
         deferRequestBy: 300,
-        minChars: 2
+        minChars: 3
     });
 
-    $('#movie_title').autocomplete({
-        lookup: function(query, doneCallback) {
-            handleLookup(query, doneCallback);
-        },
-        onSelect: function(suggestion) {
-            handleSelectSuggestion(suggestion);
-        },
-        deferRequestBy: 300,
-        minChars: 2
+    $('#fulltext-search-form').on('submit', function(event) {
+        event.preventDefault();
+        var query = $('#fulltext_search').val();
+        if (MovieId) {
+            window.location.href = "single-movie.html?id=" + MovieId;
+        }
+        else {
+            window.location.href = "movie-list.html?name=&title=" + encodeURIComponent(query) + "&year=&director=&genre=&letter=&ts=ASC1&rs=DESC2&size=25&page=1";
+        }
     });
 
     // Makes the HTTP GET request and registers on success callback function handleStarResult
