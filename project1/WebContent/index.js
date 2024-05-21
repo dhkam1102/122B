@@ -68,9 +68,15 @@ $(document).ready(function() {
     function handleLookup(query, doneCallback) {
         console.log("autocomplete initiated");
 
-        const savedSuggestions = localStorage.getItem(query);
+        if (typeof query !== 'string' || query.trim() === '') {
+            console.error("Invalid query:", query);
+            return;
+        }
+
+        const savedSuggestions = sessionStorage.getItem(query.toLowerCase());
         if (savedSuggestions) {
             console.log("using saved results for this query: " + query);
+            console.log("saved suggestions: ", savedSuggestions);
             doneCallback({suggestions: JSON.parse(savedSuggestions)});
             return;
         }
@@ -108,7 +114,7 @@ $(document).ready(function() {
         }
 
         console.log("saving results for query: " + query);
-        localStorage.setItem(query, JSON.stringify(jsonData));
+        sessionStorage.setItem(query.toLowerCase(), JSON.stringify(jsonData));
 
         console.log("saved results:" +jsonData);
 
