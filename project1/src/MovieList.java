@@ -521,7 +521,7 @@ public class MovieList extends HttpServlet {
             String movieQuery = "SELECT id, title FROM movies WHERE MATCH (title) AGAINST (? IN BOOLEAN MODE) OR ed(title, ?) <= 2 LIMIT 10";
             try (PreparedStatement statement = conn.prepareStatement(movieQuery)) {
                 statement.setString(1, "+" + query.replace(" ", " +") + "*");
-//                statement.setString(2, query);
+                statement.setString(2, query);
                 ResultSet rs = statement.executeQuery();
 
                 while (rs.next()) {
