@@ -17,6 +17,19 @@ import java.sql.*;
 
 @WebServlet(name = "AddStar", urlPatterns = "/api/add-star")
 public class AddStar extends HttpServlet {
+    private static final long serialVersionUID = 2L;
+
+    // Create a dataSource which registered in web.
+    private DataSource dataSource;
+
+    public void init(ServletConfig config) {
+        try {
+            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/moviedb");
+        } catch (NamingException e) {
+            e.printStackTrace();
+        }
+    }
+
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("text/plain");
         PrintWriter out = response.getWriter();
@@ -39,9 +52,7 @@ public class AddStar extends HttpServlet {
 
 
 
-        try {
-            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/moviedb", "mytestuser", "My6$Password");
-
+        try(Connection conn = dataSource.getConnection()) {
             // Retrieve the current maximum id
             String getIDQuery = "SELECT MAX(id) AS max_id FROM stars WHERE id LIKE 'insert%'";
             int newId = 0;

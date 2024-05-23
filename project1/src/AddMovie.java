@@ -17,6 +17,19 @@ import java.sql.*;
 
 @WebServlet(name = "AddMovie", urlPatterns = "/api/add-movie")
 public class AddMovie extends HttpServlet {
+    private static final long serialVersionUID = 2L;
+
+    // Create a dataSource which registered in web.
+    private DataSource dataSource;
+
+    public void init(ServletConfig config) {
+        try {
+            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/moviedb");
+        } catch (NamingException e) {
+            e.printStackTrace();
+        }
+    }
+
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
@@ -28,9 +41,8 @@ public class AddMovie extends HttpServlet {
         String starName = request.getParameter("starName");
         String starBirthYear = request.getParameter("starBirthYear");
 
-        try {
-            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/moviedb", "mytestuser", "My6$Password");
-
+        try (Connection conn = dataSource.getConnection())
+        {
             String callProcedure = "call add_movie (?, ?, ?, ?, ?, ?)";
             try(PreparedStatement statement = conn.prepareStatement(callProcedure))
             {

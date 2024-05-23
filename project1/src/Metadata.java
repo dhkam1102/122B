@@ -21,13 +21,22 @@ import java.sql.*;
 // Declaring a WebServlet called StarsServlet, which maps to url "/api/stars"
 @WebServlet(name = "Metadata", urlPatterns = "/api/metadata")
 public class Metadata extends HttpServlet {
+    private static final long serialVersionUID = 2L;
+
+    // Create a dataSource which registered in web.
+    private DataSource dataSource;
+
+    public void init(ServletConfig config) {
+        try {
+            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/moviedb");
+        } catch (NamingException e) {
+            e.printStackTrace();
+        }
+    }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String url = "jdbc:mysql://localhost:3306/moviedb";
-        String user = "mytestuser";
-        String password = "My6$Password";
 
-        try (Connection conn = DriverManager.getConnection(url, user, password)) {
+        try (Connection conn = dataSource.getConnection()) {
             DatabaseMetaData metaData = conn.getMetaData();
 
             // Get tables
