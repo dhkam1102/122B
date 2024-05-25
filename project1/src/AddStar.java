@@ -17,19 +17,6 @@ import java.sql.*;
 
 @WebServlet(name = "AddStar", urlPatterns = "/api/add-star")
 public class AddStar extends HttpServlet {
-    private static final long serialVersionUID = 2L;
-
-    // Create a dataSource which registered in web.
-    private DataSource dataSource;
-
-    public void init(ServletConfig config) {
-        try {
-            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/moviedb_write");
-        } catch (NamingException e) {
-            e.printStackTrace();
-        }
-    }
-
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("text/plain");
         PrintWriter out = response.getWriter();
@@ -38,23 +25,9 @@ public class AddStar extends HttpServlet {
         String starBirthYear = request.getParameter("starBirthYear");
         JsonArray jsonArray = new JsonArray();
 
-        Integer birthYear = null;
         try {
-            if (starBirthYear != null || !starBirthYear.isEmpty()) {
-                birthYear = Integer.parseInt(starBirthYear);
-            }
-        }
-        catch (NumberFormatException e) {
-            JsonObject errorJson = new JsonObject();
-            errorJson.addProperty("errorMessage", "Invalid birth year format.");
-            jsonArray.add(errorJson);
-            out.println(jsonArray.toString());
-            return;
-        }
+            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/moviedb", "mytestuser", "My6$Password");
 
-
-
-        try(Connection conn = dataSource.getConnection()) {
             // Retrieve the current maximum id
             String getIDQuery = "SELECT MAX(id) AS max_id FROM stars WHERE id LIKE 'insert%'";
             int newId = 0;
@@ -73,7 +46,12 @@ public class AddStar extends HttpServlet {
             try (PreparedStatement insertionStatement = conn.prepareStatement(insertionQuery)) {
                 insertionStatement.setString(1, "insert" + newId);
                 insertionStatement.setString(2, starName);
-                insertionStatement.setString(3, starBirthYear);
+                if(starBirthYear != null) {
+                    insertionStatement.setInt(3, Integer.parseInt(starBirthYear));
+                }
+                else {
+                    insertionStatement.setNull(3, java.sql.Types.INTEGER);
+                }
                 System.out.println(insertionQuery);
                 insertionStatement.executeUpdate();
 
