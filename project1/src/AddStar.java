@@ -40,7 +40,9 @@ public class AddStar extends HttpServlet {
 
         Integer birthYear = null;
         try {
-            birthYear = Integer.parseInt(starBirthYear);
+            if (starBirthYear != null || !starBirthYear.isEmpty()) {
+                birthYear = Integer.parseInt(starBirthYear);
+            }
         }
         catch (NumberFormatException e) {
             JsonObject errorJson = new JsonObject();

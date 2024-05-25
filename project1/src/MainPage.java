@@ -27,7 +27,7 @@ public class MainPage extends HttpServlet {
 
     public void init(ServletConfig config) {
         try {
-            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/moviedb_read");
+            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/moviedb_write");
         } catch (NamingException e) {
             e.printStackTrace();
         }
