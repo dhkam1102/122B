@@ -17,6 +17,15 @@ import java.sql.*;
 
 @WebServlet(name = "AddStar", urlPatterns = "/api/add-star")
 public class AddStar extends HttpServlet {
+    private DataSource dataSource;
+    public void init(ServletConfig config) {
+        try {
+            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/moviedb_write");
+        } catch (NamingException e) {
+            e.printStackTrace();
+        }
+    }
+
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("text/plain");
         PrintWriter out = response.getWriter();
@@ -25,16 +34,14 @@ public class AddStar extends HttpServlet {
         String starBirthYear = request.getParameter("starBirthYear");
         JsonArray jsonArray = new JsonArray();
 
-        try {
-            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/moviedb", "mytestuser", "My6$Password");
-
+        try(Connection conn = dataSource.getConnection()) {
             // Retrieve the current maximum id
-            String getIDQuery = "SELECT MAX(id) AS max_id FROM stars WHERE id LIKE 'insert%'";
+            String getIDQuery = "SELECT id FROM stars WHERE id LIKE 'insert%' ORDER BY CAST(SUBSTRING(id, 7) AS UNSIGNED) DESC LIMIT 1";
             int newId = 0;
             try (PreparedStatement getIDStatement = conn.prepareStatement(getIDQuery)) {
                 ResultSet resultSet = getIDStatement.executeQuery();
                 if (resultSet.next()) {
-                    String maxId = resultSet.getString("max_id");
+                    String maxId = resultSet.getString("id");
                     if (maxId != null && maxId.matches("insert\\d+")) {
                         newId = Integer.parseInt(maxId.substring(6)) + 1; // Get the number part and increment
                     }

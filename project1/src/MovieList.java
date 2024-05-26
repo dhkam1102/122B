@@ -520,12 +520,26 @@ public class MovieList extends HttpServlet {
 
         try(Connection conn = dataSource.getConnection()) {
             String movieQuery = "SELECT id, title FROM movies WHERE MATCH (title) AGAINST (? IN BOOLEAN MODE) LIMIT 10";
+//            String movieQuery = "SELECT id, title FROM movies WHERE MATCH (title) AGAINST (? IN BOOLEAN MODE) LIMIT 10";
 
 //            String movieQuery = "SELECT id, title FROM movies WHERE MATCH (title) AGAINST (? IN BOOLEAN MODE) OR ed(title, ?) <= 2 LIMIT 10";
             try (PreparedStatement statement = conn.prepareStatement(movieQuery)) {
-                statement.setString(1, "+" + query.replace(" ", " +") + "*");
-//                statement.setString(2, query);
+
+                String[] keywords = query.split("\\s+");
+                StringBuilder formattedQuery = new StringBuilder();
+
+                for (String keyword : keywords) {
+                    formattedQuery.append("+").append(keyword).append("* ");
+                }
+
+                // Set the formatted query string as the parameter
+                statement.setString(1, formattedQuery.toString().trim());
+
                 ResultSet rs = statement.executeQuery();
+
+//                statement.setString(1, "+" + query.replace(" ", " +") + "*");
+//                statement.setString(2, query);
+//                ResultSet rs = statement.executeQuery();
 
                 while (rs.next()) {
                     JsonObject jsonObject = new JsonObject();

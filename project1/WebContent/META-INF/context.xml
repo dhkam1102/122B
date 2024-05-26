@@ -12,7 +12,7 @@
               username="mytestuser"
               password="My6$Password"
               url="jdbc:mysql://localhost:3306/moviedb"/> <!--CHANGE THIS    -->
-<!--              url="jdbc:mysql://3.136.7.180:3306/moviedb1"/> &lt;!&ndash;CHANGE THIS    &ndash;&gt;-->
+    <!--              url="jdbc:mysql://172.31.0.246:3306/moviedb1"/> &lt;!&ndash;CHANGE THIS    &ndash;&gt;-->
 
 
 
@@ -28,7 +28,7 @@
               username="mytestuser"
               password="My6$Password"
               url="jdbc:mysql://localhost:3306/moviedb"/> <!--CHANGE THIS    -->
-<!--              url="jdbc:mysql://3.140.58.153:3306/moviedb1"/> &lt;!&ndash;CHANGE THIS    &ndash;&gt;-->
+    <!--              url="jdbc:mysql://3.140.58.153:3306/moviedb1"/> &lt;!&ndash;CHANGE THIS    &ndash;&gt;-->
 
     <!--              url="jdbc:mysql://localhost:3306/moviedb"/> &lt;!&ndash;CHANGE THIS    &ndash;&gt;-->
 
