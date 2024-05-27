@@ -369,7 +369,7 @@ public class MovieList extends HttpServlet {
 
                     if (title != null && !title.isEmpty()) {
 //                        mid_query.append("AND m.title LIKE '%").append(title).append("%'");
-                        mid_query.append("AND MATCH (m.title) AGAINST ('");
+                        mid_query.append("AND (MATCH (m.title) AGAINST ('");
                         String[] keywords = title.split("\\s+");
 
                         for (int i = 0; i < keywords.length; i++)
