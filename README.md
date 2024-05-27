@@ -43,8 +43,8 @@
 ##### File Name/Path
 ###### Changed META-INF/context.xml url
 - [View the META-INF/context.xml](project1/WebContent/META-INF/context.xml)
-- asdf
-- asdf
+- [View the Master Instance mysql cnf file](instance2mysqld.cnf)
+- [View the Slave Instance mysql cnf file](instance3mysqld.cnf)
 
 ##### How read/write requests were routed to Master/Slave SQL
 - In context.xml, we defined two datasource for wrtie operation and read opertaion. Since the write operation (INSERT INTO, stored procedure, stored function etc) into slave instance cannot affect master slave, we must direct to master instance when the laod balancer assign to slave instance.
