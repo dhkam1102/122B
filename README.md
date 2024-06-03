@@ -11,6 +11,19 @@
 - **Watch Here**: [View the Project Demo](https://drive.google.com/file/d/1dmHOXeJXMZbJrCLydqOzbuoPp69IcbL8/view?usp=sharing)
 - **URL**: [(https://drive.google.com/file/d/1dmHOXeJXMZbJrCLydqOzbuoPp69IcbL8/view?usp=sharing)]
 
+## AutoComplete fulltext and fuzzy search
+##### File Name/Path
+- [Veiw the MovieList](project1/src/MovieList)
+### Description
+- This is our implementation of an autocomplete feature for movie titles using full-text and fuzzy search.
+- The search query is designed to provide results with high relevance and minimal errors by using 2 for the distance.
+- Both auto complete and search uses both full-text and fuzzy search.
+### Query
+- Query used for the search is as follows:
+``` sql
+"SELECT id, title FROM movies WHERE MATCH (title) AGAINST (? IN BOOLEAN MODE) OR ed(title, ?) <= 2 LIMIT 10";
+```
+
 ## Connection Pooling
 ##### File Name/Path
 ###### All files that require SQL connection due to Prepared Statement
