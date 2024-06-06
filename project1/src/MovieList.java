@@ -384,7 +384,7 @@ public class MovieList extends HttpServlet {
                         mid_query.append("' IN BOOLEAN MODE) ");
 
                         // fuzzy search
-                        mid_query.append("OR ed(m.title, '").append(title).append("') <= 2) ");
+                        //mid_query.append("OR ed(m.title, '").append(title).append("') <= 2) ");
 
                     }
 
@@ -520,9 +520,9 @@ public class MovieList extends HttpServlet {
 
         try(Connection conn = dataSource.getConnection()) {
 //            String movieQuery = "SELECT id, title FROM movies WHERE MATCH (title) AGAINST (? IN BOOLEAN MODE) LIMIT 10";
-//            String movieQuery = "SELECT id, title FROM movies WHERE MATCH (title) AGAINST (? IN BOOLEAN MODE) LIMIT 10";
+            String movieQuery = "SELECT id, title FROM movies WHERE MATCH (title) AGAINST (? IN BOOLEAN MODE) LIMIT 10";
 
-            String movieQuery = "SELECT id, title FROM movies WHERE MATCH (title) AGAINST (? IN BOOLEAN MODE) OR ed(title, ?) <= 2 LIMIT 10";
+            //String movieQuery = "SELECT id, title FROM movies WHERE MATCH (title) AGAINST (? IN BOOLEAN MODE) OR ed(title, ?) <= 2 LIMIT 10";
             try (PreparedStatement statement = conn.prepareStatement(movieQuery)) {
 
                 String[] keywords = query.split("\\s+");
@@ -534,7 +534,7 @@ public class MovieList extends HttpServlet {
 
                 // Set the formatted query string as the parameter
                 statement.setString(1, formattedQuery.toString().trim());
-                statement.setString(2, query);
+                //statement.setString(2, query);
 
                 ResultSet rs = statement.executeQuery();
 

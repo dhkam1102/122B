@@ -11,7 +11,7 @@
               maxTotal="100" maxIdle="30" maxWaitMillis="10000"
               username="mytestuser"
               password="My6$Password"
-              url="jdbc:mysql://172.31.37.81/moviedb?autoReconnect=true&amp;allowPublicKeyRetrieval=true&amp;useSSL=false&amp;cachePrepStmts=true"/>
+              url="jdbc:mysql://mysql-primary:3306/moviedb?autoReconnect=true&amp;allowPublicKeyRetrieval=true&amp;useSSL=false&amp;cachePrepStmts=true"/>
     <!--CHANGE THIS    -->
     <!--              url="jdbc:mysql://172.31.0.246:3306/moviedb1"/> &lt;!&ndash;CHANGE THIS    &ndash;&gt;-->
 
@@ -28,7 +28,7 @@
               maxTotal="100" maxIdle="30" maxWaitMillis="10000"
               username="mytestuser"
               password="My6$Password"
-              url="jdbc:mysql://172.31.41.221/moviedb?autoReconnect=true&amp;allowPublicKeyRetrieval=true&amp;useSSL=false&amp;cachePrepStmts=true"/> <!--CHANGE THIS    -->
+              url="jdbc:mysql://mysql-secondary:3306/moviedb?autoReconnect=true&amp;allowPublicKeyRetrieval=true&amp;useSSL=false&amp;cachePrepStmts=true"/> <!--CHANGE THIS    -->
     <!--              url="jdbc:mysql://3.140.58.153:3306/moviedb1"/> &lt;!&ndash;CHANGE THIS    &ndash;&gt;-->
 
     <!--              url="jdbc:mysql://localhost:3306/moviedb"/> &lt;!&ndash;CHANGE THIS    &ndash;&gt;-->
