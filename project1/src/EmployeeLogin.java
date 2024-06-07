@@ -36,19 +36,19 @@ public class EmployeeLogin extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         PrintWriter out = response.getWriter();
 
-        String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
-        System.out.println("gRecaptchaResponse=" + gRecaptchaResponse);
+//        String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
+//        System.out.println("gRecaptchaResponse=" + gRecaptchaResponse);
         JsonObject responseJsonObject = new JsonObject();
 
-        try {
-            RecaptchaVerifyUtils.verify(gRecaptchaResponse);
-        } catch (Exception e) {
-            // Return a proper HTML response with an error message
-            responseJsonObject.addProperty("status", "fail");
-            responseJsonObject.addProperty("message", "reCAPTCHA verification error: " + e.getMessage());
-            out.write(responseJsonObject.toString());
-            return;
-        }
+//        try {
+//            RecaptchaVerifyUtils.verify(gRecaptchaResponse);
+//        } catch (Exception e) {
+//            // Return a proper HTML response with an error message
+//            responseJsonObject.addProperty("status", "fail");
+//            responseJsonObject.addProperty("message", "reCAPTCHA verification error: " + e.getMessage());
+//            out.write(responseJsonObject.toString());
+//            return;
+//        }
 
         String email = request.getParameter("username");
         String typed_password = request.getParameter("password");
