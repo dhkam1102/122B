@@ -381,7 +381,7 @@ public class MovieList extends HttpServlet {
                             }
                             mid_query.append(word);
                         }
-                        mid_query.append("' IN BOOLEAN MODE) ");
+                        mid_query.append("' IN BOOLEAN MODE)) ");
 
                         // fuzzy search
                         //mid_query.append("OR ed(m.title, '").append(title).append("') <= 2) ");
