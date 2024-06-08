@@ -8,21 +8,16 @@
 - **Task 1 - FullText, Task 2, Task 3, Task 4, README.md**
 
 ### Project Demonstration Video
-- **Watch Here**: [View the Project Demo](https://drive.google.com/file/d/1dmHOXeJXMZbJrCLydqOzbuoPp69IcbL8/view?usp=sharing)
-- **URL**: [(https://drive.google.com/file/d/1dmHOXeJXMZbJrCLydqOzbuoPp69IcbL8/view?usp=sharing)]
+- **Watch Here**: [View the Project Demo](https://drive.google.com/file/d/1Xz_q58SkOkxV3fFuK8Qx0CKWHx-lOLzb/view?usp=sharing)
+- **URL**: [(https://drive.google.com/file/d/1Xz_q58SkOkxV3fFuK8Qx0CKWHx-lOLzb/view?usp=sharing)]
 
 ## AutoComplete fulltext and fuzzy search
 ##### File Name/Path
-- [Veiw the MovieList](project1/src/MovieList)
-### Description
-- This is our implementation of an autocomplete feature for movie titles using full-text and fuzzy search.
-- The search query is designed to provide results with high relevance and minimal errors by using 2 for the distance.
-- Both auto complete and search uses both full-text and fuzzy search.
-### Query
-- Query used for the search is as follows:
-``` sql
-"SELECT id, title FROM movies WHERE MATCH (title) AGAINST (? IN BOOLEAN MODE) OR ed(title, ?) <= 2 LIMIT 10";
-```
+- [Veiw the Dockerfile](project1/Dockerfile)
+- [Veiw the Ingree yaml file](project1/ingress.yaml)
+- [Veiw the fablix yaml](project1/fablix.yaml)
+- [Veiw the jmx file](project1/syTest.jmx)
+
 
 ## Connection Pooling
 ##### File Name/Path
